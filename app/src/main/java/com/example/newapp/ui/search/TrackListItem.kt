@@ -2,6 +2,7 @@ package com.example.newapp.ui.search
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,17 +37,20 @@ import com.example.newapp.data.network.Track
 @Composable
 fun TrackListItem(
     track: Track,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+    onLongClick: (() -> Unit)? = null, //при долгом нажатии на элемент;
+    onClick: () -> Unit = {} //при обычном нажатии на элемент.
 ) {
     Row(
-        modifier = modifier
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+            .padding(horizontal = 16.dp)
+            .combinedClickable(
+                onClick = { onClick() },
+                onLongClick = { onLongClick?.invoke() }
+            )
     ) {
         Icon(
             imageVector = Icons.Default.MusicNote,
