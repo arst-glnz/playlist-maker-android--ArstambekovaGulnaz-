@@ -52,10 +52,9 @@ fun TrackListItem(
                 onLongClick = { onLongClick?.invoke() }
             )
     ) {
-        Icon(
-            imageVector = Icons.Default.MusicNote,
+        Image(
+            painter = painterResource(id = R.drawable.music_note),
             contentDescription = null,
-            tint = Color(0xFF808080)
         )
         Column(
             modifier = Modifier

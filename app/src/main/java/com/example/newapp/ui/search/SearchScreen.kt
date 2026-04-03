@@ -1,15 +1,6 @@
 package com.example.newapp.ui.search
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.snapping.SnapPosition
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,41 +8,54 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.newapp.R
 import com.example.newapp.presentation.SearchViewModel
+import com.example.newapp.ui.search.HistoryRequests  // ← твой компонент из курса
 
 @OptIn(ExperimentalMaterial3Api::class)
-//@Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
-    viewModel: SearchViewModel,
-    onBackClick: () -> Unit = {}
+    searchViewModel: SearchViewModel,
+    onClick: (Int?) -> Unit
 ) {
-    val screenState by viewModel.searchScreenState.collectAsState()
-    var query by remember { mutableStateOf("") }
+    val screenState by searchViewModel.searchScreenState.collectAsState()
+    var historyList by remember { mutableStateOf<List<String>>(emptyList()) }
+    var text by remember { mutableStateOf("") }
+    var isSearchFocused by remember { mutableStateOf(false) }
+
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+
+     /*LaunchedEffect(text) {
+        searchViewModel.updateQuery(text)
+    }*/
+
+    LaunchedEffect(screenState) {
+        when (screenState) {
+            is SearchState.Success -> {
+                focusManager.clearFocus()
+            }
+            else -> Unit
+        }
+    }
+
+    /*LaunchedEffect(Unit) {
+        historyList = searchViewModel.getHistoryList()
+    }*/
 
     Column(
         modifier = Modifier
@@ -60,11 +64,11 @@ fun SearchScreen(
     ) {
         Box(
             modifier = Modifier
-            .height(56.dp)
-            .fillMaxWidth()
+                .height(56.dp)
+                .fillMaxWidth()
         ) {
             IconButton(
-                onClick = onBackClick,
+                { onClick(null) },
                 modifier = Modifier
                     .padding(top = 14.dp)
                     .size(24.dp)
@@ -88,8 +92,8 @@ fun SearchScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         TextField(
-            value = query,
-            onValueChange = { query = it },
+            value = text,
+            onValueChange = { text = it },
             placeholder = {
                 Text(
                     text = stringResource(R.string.search),
@@ -99,21 +103,21 @@ fun SearchScreen(
             },
             leadingIcon = {
                 IconButton(
-                    onClick = {viewModel.search(query)},
+                    onClick = {searchViewModel.search(text)},
                     //modifier = Modifier.padding(start = 8.dp)
                     //передали значение стейта guery в кач-ве строки поиска
                 ) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = null,
-                    tint = Color(0xFF818C99),
-                    modifier = Modifier.padding(start = 3.dp),
-                )
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null,
+                        tint = Color(0xFF818C99),
+                        modifier = Modifier.padding(start = 3.dp),
+                    )
                 }
             },
             trailingIcon = {
-                if (query.isNotEmpty()) {
-                    IconButton(onClick = { query = "" }) {
+                if (text.isNotEmpty()) {
+                    IconButton(onClick = { text = "" }) {
                         Icon(
                             imageVector = Icons.Default.Clear,
                             contentDescription = "Очистить",
@@ -138,39 +142,65 @@ fun SearchScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        //обработка поиска
-        when (screenState) {
-            is SearchState.Initial -> {
-                Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Введите строку для поиска")
+        /*if (isFocused && text.isEmpty() && historyList.isNotEmpty()) {
+            HistoryRequests(
+                historyList = historyList,
+                onClick = { word ->
+                    text = word.word
+                }
+            )
+        }*/
+        // === Отображение контента ===
+        when {
+            screenState is SearchState.Initial -> {
+                if (text.isEmpty()) {
+                    Box(
+                        modifier = modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(stringResource(R.string.search_placeholder))
+                    }
+                } else {
+                    Box(
+                        modifier = modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
             }
 
-            is SearchState.Searching -> {
-                Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            screenState is SearchState.Searching -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
                     CircularProgressIndicator()
                 }
             }
 
-            is SearchState.Success -> {
+            screenState is SearchState.Success -> {
                 val tracks = (screenState as SearchState.Success).list
-                LazyColumn(
-                    modifier = modifier.fillMaxSize()
-                ) {
-                    items(tracks.size) { index ->
-                        TrackListItem(track = tracks[index])
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(tracks) { track ->
+                        TrackListItem(track = track)
                         HorizontalDivider(thickness = 0.5.dp)
                     }
                 }
             }
 
-            is SearchState.Fail -> {
+            screenState is SearchState.Searching -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            }
+
+            screenState is SearchState.Fail -> {
                 val error = (screenState as SearchState.Fail).error
-                Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text("Ошибка: $error", color = Color.Red)
                 }
             }
         }
     }
 }
-

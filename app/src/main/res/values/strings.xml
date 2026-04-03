@@ -13,4 +13,5 @@
     <string name="support">Написать в поддержку</string>
     <string name="user_offer">Пользовательское соглашение</string>
     <string name="light_or_dark">Темная тема</string>
+    <string name="search_placeholder">Введите строку для поиска</string>
 </resources>

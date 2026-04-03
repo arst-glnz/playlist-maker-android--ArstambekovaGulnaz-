@@ -32,8 +32,8 @@ fun PlaylistHost(
         composable(Screen.Search.name) {
             SearchScreen(
                 modifier = Modifier.fillMaxSize(),
-                viewModel = searchViewModel,
-                onBackClick = { navController.popBackStack() }
+                searchViewModel = searchViewModel,
+                onClick = { navController.popBackStack() } //
             )
         }
 
