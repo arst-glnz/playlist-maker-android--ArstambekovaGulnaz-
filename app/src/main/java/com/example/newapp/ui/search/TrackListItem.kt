@@ -106,7 +106,7 @@ fun TrackListItem(
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+/*@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun TrackListItemPreview() {
     val sampleTracks = listOf(
@@ -134,4 +134,4 @@ fun TrackListItemPreview() {
             TrackListItem(track = track)
         }
     }
-}
+}*/
