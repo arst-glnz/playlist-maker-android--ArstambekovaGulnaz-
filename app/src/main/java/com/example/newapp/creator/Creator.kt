@@ -8,7 +8,7 @@ import com.example.newapp.domain.impl.TrackSearchInteractorImpl
 
 object Creator {
     fun getTracksRepository(): TracksRepository {
-        return TracksRepositoryImpl(RetrofitNetworkClient(Storage()))
+        return TracksRepositoryImpl()
     }
 
     fun provideTrackSearchInteractor(): TrackSearchInteractor {

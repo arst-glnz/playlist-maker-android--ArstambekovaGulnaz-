@@ -7,7 +7,7 @@ import com.example.newapp.domain.api.TracksRepository
 import com.example.newapp.data.network.Track
 import kotlinx.coroutines.delay
 
-class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
+class TracksRepositoryImpl() : TracksRepository {
     override suspend fun getAllTracks(): List<Track> {
         delay(1000)// Имитируем запрос к серверу
         return listTracks
@@ -46,6 +46,16 @@ val listTracks = listOf(
         trackName = "авангард",
         artistName = "вышел покурить",
         trackTime = "2:43",
+        image = "",
+        favorite = false,
+        playlistId = 0
+    ),
+
+    Track(
+        id = 4,
+        trackName = "Бошетунмай",
+        artistName = "Кино",
+        trackTime = "4:06",
         image = "",
         favorite = false,
         playlistId = 0

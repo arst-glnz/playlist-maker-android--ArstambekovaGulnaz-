@@ -35,27 +35,28 @@ fun SearchScreen(
     val screenState by searchViewModel.searchScreenState.collectAsState()
     var historyList by remember { mutableStateOf<List<String>>(emptyList()) }
     var text by remember { mutableStateOf("") }
-    var isSearchFocused by remember { mutableStateOf(false) }
-
+    var isFocused by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
-     /*LaunchedEffect(text) {
+    LaunchedEffect(text) {
         searchViewModel.updateQuery(text)
-    }*/
+    }
 
     LaunchedEffect(screenState) {
         when (screenState) {
             is SearchState.Success -> {
                 focusManager.clearFocus()
             }
+
             else -> Unit
         }
     }
-
-    /*LaunchedEffect(Unit) {
-        historyList = searchViewModel.getHistoryList()
-    }*/
+    LaunchedEffect(Unit) {
+        searchViewModel.historyList.collect { list ->
+            historyList = list
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -93,7 +94,10 @@ fun SearchScreen(
 
         TextField(
             value = text,
-            onValueChange = { text = it },
+            onValueChange = { newText ->
+                text = newText
+            },
+
             placeholder = {
                 Text(
                     text = stringResource(R.string.search),
@@ -102,22 +106,21 @@ fun SearchScreen(
                 )
             },
             leadingIcon = {
-                IconButton(
-                    onClick = {searchViewModel.search(text)},
-                    //modifier = Modifier.padding(start = 8.dp)
-                    //передали значение стейта guery в кач-ве строки поиска
-                ) {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = null,
                         tint = Color(0xFF818C99),
                         modifier = Modifier.padding(start = 3.dp),
                     )
-                }
             },
             trailingIcon = {
                 if (text.isNotEmpty()) {
-                    IconButton(onClick = { text = "" }) {
+                    IconButton(
+                        onClick = {
+                            text = ""
+                            searchViewModel.clearSearch()
+                        }
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Clear,
                             contentDescription = "Очистить",
@@ -135,70 +138,52 @@ fun SearchScreen(
                 unfocusedIndicatorColor = Color.Transparent,
                 cursorColor = Color.Black
             ),
+
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp)
+                .focusRequester(focusRequester)
+                .onFocusChanged { focusState ->
+                    isFocused = focusState.isFocused
+                },
+
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        /*if (isFocused && text.isEmpty() && historyList.isNotEmpty()) {
-            HistoryRequests(
-                historyList = historyList,
-                onClick = { word ->
-                    text = word.word
-                }
-            )
-        }*/
         // === Отображение контента ===
-        when {
-            screenState is SearchState.Initial -> {
-                if (text.isEmpty()) {
-                    Box(
-                        modifier = modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
+        when (screenState) {
+            is SearchState.Initial -> {
+                if (text.isEmpty() && historyList.isNotEmpty()) {
+                    HistoryRequests(
+                        historyList = historyList,
+                        onClick = { word -> text = word }
+                    )
+                } else {
+                    Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text(stringResource(R.string.search_placeholder))
                     }
-                } else {
-                    Box(
-                        modifier = modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
                 }
             }
-
-            screenState is SearchState.Searching -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
+            is SearchState.Searching -> {  // Только один
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
             }
-
-            screenState is SearchState.Success -> {
-                val tracks = (screenState as SearchState.Success).list
+            is SearchState.Success -> {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(tracks) { track ->
+                    items((screenState as? SearchState.Success)?.list ?: emptyList()) { track ->
                         TrackListItem(track = track)
-                        HorizontalDivider(thickness = 0.5.dp)
+                        //HorizontalDivider(thickness = 0.5.dp)
                     }
                 }
             }
-
-            screenState is SearchState.Searching -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            }
-
-            screenState is SearchState.Fail -> {
-                val error = (screenState as SearchState.Fail).error
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Ошибка: $error", color = Color.Red)
+            is SearchState.Fail -> {
+                Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(stringResource(R.string.error), color = Color.Red)
+                        Text((screenState as SearchState.Fail).error, color = Color.Red, fontSize = 12.sp)
+                    }
                 }
             }
         }
