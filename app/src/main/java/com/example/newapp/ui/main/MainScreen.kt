@@ -32,11 +32,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.newapp.R
+import com.example.newapp.domain.models.Playlist
 
 @Composable
 fun MainScreen(
     onSearchClick: () -> Unit,
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
+    onPlaylistClick: () -> Unit,
+    onFavoritesClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -78,12 +81,12 @@ fun MainScreen(
                 R.drawable.playlist,
                 kar,
                 R.string.playlists,
-                onClick = { context }
+                onClick =  onPlaylistClick
             )
             MainButton(
                 R.drawable.followed,
                 kar, R.string.isbrannoe,
-                onClick = { context }
+                onClick = onFavoritesClick
             )
             MainButton(
                 R.drawable.settings,

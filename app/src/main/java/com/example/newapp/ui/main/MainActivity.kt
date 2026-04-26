@@ -8,11 +8,13 @@ import androidx.activity.viewModels
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.newapp.PlaylistHost
+import com.example.newapp.presentation.PlaylistsViewModel
 import com.example.newapp.presentation.SearchViewModel
 import kotlin.getValue
 
 class MainActivity : ComponentActivity() {
     private val searchViewModel: SearchViewModel by viewModels()
+    private val playlistsViewModel: PlaylistsViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -21,6 +23,7 @@ class MainActivity : ComponentActivity() {
             PlaylistHost(
                 navController = navController,
                 searchViewModel = searchViewModel,
+                playlistsViewModel = playlistsViewModel,
             )
         }
 

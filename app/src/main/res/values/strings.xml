@@ -15,4 +15,6 @@
     <string name="light_or_dark">Темная тема</string>
     <string name="search_placeholder">Введите строку для поиска</string>
     <string name="error">Ошибка поиска</string>
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="add_playlist">добавить в плейлист</string>
 </resources>

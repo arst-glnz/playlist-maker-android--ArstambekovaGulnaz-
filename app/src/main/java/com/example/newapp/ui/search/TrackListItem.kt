@@ -9,12 +9,19 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SegmentedButtonDefaults.Icon
@@ -135,3 +142,46 @@ fun TrackListItemPreview() {
         }
     }
 }*/
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun History(
+   // historyList: List<String>,
+    //onClick: (String) -> Unit
+) {
+    val historyList = listOf("Tom", "Sam", "Kate", "Bob", "Alice")
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(max = 250.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFE6E8EB))
+    ) {
+        LazyColumn {
+            itemsIndexed(historyList) { index, item ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        //.clickable { onClick(item) }
+                        .padding(horizontal = 16.dp, vertical = 13.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.History,
+                        contentDescription = null,
+                        tint = Color(0xFF818C99),        // серый цвет как в твоём TextField
+                        modifier = Modifier.size(20.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Text(
+                        text = item,
+                        fontSize = 16.sp,
+                        color = Color.Black
+                    )
+                }
+            }
+        }
+    }
+}

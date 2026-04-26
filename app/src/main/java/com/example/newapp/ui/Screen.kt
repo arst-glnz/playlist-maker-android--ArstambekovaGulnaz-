@@ -4,4 +4,6 @@ enum class Screen {
     Main,
     Search,
     Settings,
+    Playlists,
+    Favorites
 }

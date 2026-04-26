@@ -1,5 +1,6 @@
 package com.example.newapp.ui.search
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,6 +18,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.unit.dp
@@ -24,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import com.example.newapp.R
 import com.example.newapp.presentation.SearchViewModel
 import com.example.newapp.ui.search.HistoryRequests  // ← твой компонент из курса
+import java.nio.file.WatchEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -106,12 +109,12 @@ fun SearchScreen(
                 )
             },
             leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = null,
-                        tint = Color(0xFF818C99),
-                        modifier = Modifier.padding(start = 3.dp),
-                    )
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = null,
+                    tint = Color(0xFF818C99),
+                    modifier = Modifier.padding(start = 3.dp),
+                )
             },
             trailingIcon = {
                 if (text.isNotEmpty()) {
@@ -138,7 +141,6 @@ fun SearchScreen(
                 unfocusedIndicatorColor = Color.Transparent,
                 cursorColor = Color.Black
             ),
-
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp)
@@ -147,45 +149,95 @@ fun SearchScreen(
                     isFocused = focusState.isFocused
                 },
 
-        )
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         // === Отображение контента ===
         when (screenState) {
             is SearchState.Initial -> {
                 if (text.isEmpty() && historyList.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height((-8).dp))           // небольшой отступ от поля поиска
                     HistoryRequests(
                         historyList = historyList,
-                        onClick = { word -> text = word }
+                        onClick = { word ->
+                            text = word
+                        }
                     )
-                } else {
-                    Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                } else if (text.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Text(stringResource(R.string.search_placeholder))
                     }
                 }
             }
+            // ... остальные состояния
             is SearchState.Searching -> {  // Только один
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
             }
+
             is SearchState.Success -> {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items((screenState as? SearchState.Success)?.list ?: emptyList()) { track ->
-                        TrackListItem(track = track)
-                        //HorizontalDivider(thickness = 0.5.dp)
+                val tracks = (screenState as SearchState.Success).list
+
+                if (tracks.isEmpty()) {
+                    //Ничего не нашлось
+                    NothingFoundScreen()
+                } else {
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        items(tracks) { track ->
+                            TrackListItem(
+                                track = track,
+                                onClick = { onClick(track.id.toInt()) }
+                            )
+                        }
                     }
                 }
             }
+
+
             is SearchState.Fail -> {
                 Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(stringResource(R.string.error), color = Color.Red)
-                        Text((screenState as SearchState.Fail).error, color = Color.Red, fontSize = 12.sp)
+                        Text(
+                            (screenState as SearchState.Fail).error,
+                            color = Color.Red,
+                            fontSize = 12.sp
+                        )
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun NothingFoundScreen() {
+    Box(
+        modifier = Modifier.fillMaxWidth().padding(top = 112.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.is_nothing_found), // ← твоя картинка
+                contentDescription = "Ничего не нашлось",
+                modifier = Modifier.size(120.dp)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = stringResource(R.string.nothing_found),
+                fontSize = 19.sp,
+                fontWeight = Medium,
+                color = Color.Black
+            )
         }
     }
 }

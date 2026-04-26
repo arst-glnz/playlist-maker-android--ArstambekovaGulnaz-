@@ -21,7 +21,9 @@ import java.io.IOException
 
 @OptIn(FlowPreview::class)
 class SearchViewModel() : ViewModel() {
-    private val tracksRepository = TracksRepositoryImpl()
+    private val tracksRepository = TracksRepositoryImpl(
+        scope = viewModelScope
+    )
     private val searchHistoryRepository = SearchHistoryRepositoryImpl(scope = viewModelScope)
     private val _searchQuery = MutableStateFlow("")
     private val _searchScreenState = MutableStateFlow<SearchState>(SearchState.Initial)
@@ -60,6 +62,11 @@ class SearchViewModel() : ViewModel() {
                 _searchScreenState.update { SearchState.Searching }
                 searchHistoryRepository.addToHistory(Word(word = request))
                 val list = tracksRepository.searchTracks(expression = request)
+                /*val allTracks = tracksRepository.getAllTracks()
+                val list = allTracks.filter { track ->
+                    track.trackName.contains(request, ignoreCase = true) ||
+                            track.artistName.contains(request, ignoreCase = true)
+                }*/
                 _searchScreenState.update { SearchState.Success(list = list) }
             } catch (e: IOException) {
                 _searchScreenState.update { SearchState.Fail(e.message.toString()) }

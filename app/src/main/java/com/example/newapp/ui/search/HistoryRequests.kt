@@ -1,8 +1,11 @@
 package com.example.newapp.ui.search
 
+import android.R
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,31 +40,24 @@ fun HistoryRequests(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(max = 260.dp),
-        shape = RoundedCornerShape(12.dp),           // мягкие углы как на скрине
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFF2F2F7)       // самый близкий светло-серый цвет
-        ),
-        border = null,                               // убираем видимую границу
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 0.dp
-        )
+            .heightIn(max = 250.dp)
+        ,
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFE6E8EB))
     ) {
-        LazyColumn(
-            modifier = Modifier.padding(vertical = 6.dp)
-        ) {
-            itemsIndexed(historyList.take(5)) { index, item ->   // показываем максимум 5, как обычно
+        LazyColumn {
+            itemsIndexed(historyList) { index, item ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { onClick(item) }
-                        .padding(horizontal = 16.dp, vertical = 14.dp),
+                        .padding(horizontal = 16.dp, vertical = 13.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         imageVector = Icons.Default.History,
                         contentDescription = null,
-                        tint = Color(0xFF8E8E93),          // серый цвет иконки часов
+                        tint = Color(0xFF818C99),        // серый цвет как в твоём TextField
                         modifier = Modifier.size(20.dp)
                     )
 
@@ -69,20 +65,8 @@ fun HistoryRequests(
 
                     Text(
                         text = item,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Normal
-                        ),
-                        color = Color(0xFF1C1C1E)
-                    )
-                }
-
-                // Тонкий разделитель, как на скриншоте
-                if (index < historyList.lastIndex) {
-                    HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = 52.dp), // отступ от левого края (иконка + отступ)
-                        thickness = 0.6.dp,
-                        color = Color(0xFFE5E5EA)
+                        fontSize = 17.sp,
+                        color = Color.Black
                     )
                 }
             }
