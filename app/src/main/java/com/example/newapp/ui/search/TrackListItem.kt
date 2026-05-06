@@ -169,7 +169,7 @@ fun History(
                     Icon(
                         imageVector = Icons.Default.History,
                         contentDescription = null,
-                        tint = Color(0xFF818C99),        // серый цвет как в твоём TextField
+                        tint = Color(0xFF818C99),
                         modifier = Modifier.size(20.dp)
                     )
 

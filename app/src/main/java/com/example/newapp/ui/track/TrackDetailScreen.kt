@@ -6,9 +6,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -17,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,140 +41,159 @@ fun TrackDetailScreen(
 ) {
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
+
     var showBottomSheet by remember { mutableStateOf(false) }
     var track by remember { mutableStateOf<Track?>(null) }
     var playlists by remember { mutableStateOf<List<Playlist>>(emptyList()) }
 
     LaunchedEffect(Unit) {
-        playlistsViewModel.playlists.collect { playlistList ->
-            playlists = playlistList
+        playlistsViewModel.playlists.collect {
+            playlists = it
         }
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF1A1A1A))
+            .background(Color(0xFFF5F5F5))
     ) {
-        // Верхняя панель с кнопкой назад
+
+        // Back
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(start = 12.dp, top = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Назад",
-                    tint = Color.White
+                    contentDescription = null,
+                    tint = Color.Black
                 )
             }
         }
 
-        // Обложка и информация о треке
+        // Контент
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
             // Обложка
             Box(
                 modifier = Modifier
                     .size(280.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFF2D2D2D)),
-                contentAlignment = Alignment.Center
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(Color(0xFFE53935))
+                    .padding(8.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.music_note),
-                    contentDescription = "Обложка трека",
-                    modifier = Modifier.size(64.dp)
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(16.dp))
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(28.dp))
 
-            // Название трека
             Text(
-                text = track?.trackName ?: "Название трека",
-                color = Color.White,
+                text = track?.trackName ?: "Yesterday (Remastered 2009)",
                 fontSize = 22.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Medium,
+                color = Color.Black
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
-            // Исполнитель
             Text(
-                text = track?.artistName ?: "Исполнитель",
-                color = Color(0xFFB0B0B0),
-                fontSize = 16.sp
+                text = track?.artistName ?: "The Beatles",
+                fontSize = 16.sp,
+                color = Color(0xFF8A8A8A)
             )
         }
 
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(40.dp))
 
-        // Кнопки действий
+        // КНОПКИ
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 32.dp, vertical = 32.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
+                .padding(horizontal = 48.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Кнопка "Избранное"
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+
+            // Playlist
+            Box(
                 modifier = Modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFFE0E0E0))
+                    .clickable { showBottomSheet = true },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.PlaylistAdd,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(28.dp)
+                )
+            }
+
+            // Favorite
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFFE0E0E0))
                     .clickable {
                         track?.let {
                             scope.launch {
                                 playlistsViewModel.toggleFavorite(it, !it.favorite)
-                                track = track?.copy(favorite = !it.favorite)
+                                track = it.copy(favorite = !it.favorite)
                             }
                         }
-                    }
-                    .padding(8.dp)
+                    },
+                contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = if (track?.favorite == true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                    contentDescription = "Избранное",
-                    tint = if (track?.favorite == true) Color.Red else Color.White,
-                    modifier = Modifier.size(32.dp)
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = if (track?.favorite == true) "В избранном" else "В избранное",
-                    color = Color.White,
-                    fontSize = 12.sp
-                )
-            }
-
-            // Кнопка "Добавить в плейлист"
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .clickable { showBottomSheet = true }
-                    .padding(8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.PlaylistAdd,
-                    contentDescription = "В плейлист",
+                    imageVector = if (track?.favorite == true)
+                        Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(32.dp)
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "В плейлист",
-                    color = Color.White,
-                    fontSize = 12.sp
+                    modifier = Modifier.size(28.dp)
                 )
             }
         }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        // ⏱ ДЛИТЕЛЬНОСТЬ
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 24.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Длительность",
+                fontSize = 14.sp,
+                color = Color(0xFF9E9E9E)
+            )
+
+            Text(
+                text = "5:35",
+                fontSize = 14.sp,
+                color = Color.Black
+            )
+        }
     }
 
-    // Bottom Sheet с плейлистами
+    // BottomSheet
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
@@ -180,10 +203,25 @@ fun TrackDetailScreen(
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
+
+                // handle
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .padding(vertical = 8.dp)
+                            .size(width = 34.dp, height = 4.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(Color(0xFFD0D0D0))
+                    )
+                }
+
                 Text(
                     text = "Добавить в плейлист",
                     fontSize = 19.sp,
-                    fontWeight = FontWeight.Medium,
+                    fontFamily = FontFamily(Font(R.font.medium)),
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
@@ -191,6 +229,7 @@ fun TrackDetailScreen(
                     Text(
                         text = "Нет доступных плейлистов",
                         color = Color.Gray,
+                        fontFamily = FontFamily(Font(R.font.regular)),
                         modifier = Modifier.padding(vertical = 24.dp)
                     )
                 } else {
@@ -218,20 +257,26 @@ fun TrackDetailScreen(
                                     contentDescription = null,
                                     modifier = Modifier.size(48.dp)
                                 )
+
                                 Spacer(modifier = Modifier.width(12.dp))
+
                                 Column {
                                     Text(
                                         text = playlist.name,
                                         fontSize = 16.sp,
+                                        fontFamily = FontFamily(Font(R.font.regular)),
                                         color = Color.Black
                                     )
+
                                     Text(
                                         text = "${playlist.tracks.size} треков",
                                         fontSize = 13.sp,
+                                        fontFamily = FontFamily(Font(R.font.regular)),
                                         color = Color.Gray
                                     )
                                 }
                             }
+
                             HorizontalDivider()
                         }
                     }

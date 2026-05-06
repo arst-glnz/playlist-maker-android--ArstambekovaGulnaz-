@@ -28,6 +28,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,7 +55,7 @@ fun MainScreen(
                 .fillMaxWidth()
                 .padding(top = 28.dp, start = 16.dp),
             fontSize = 22.sp,
-            fontWeight = FontWeight.Medium,
+            fontFamily = FontFamily(Font(R.font.medium)),
             color = Color.White
         )
     }
@@ -132,7 +134,8 @@ fun MainButton(
                     stringResource(txt),
                     modifier = Modifier.padding(start = 10.dp),
                     color = Color.Black,
-                    fontSize = 22.sp
+                    fontSize = 22.sp,
+                    fontFamily = FontFamily(Font(R.font.medium))
                 )
             }
             Image(
