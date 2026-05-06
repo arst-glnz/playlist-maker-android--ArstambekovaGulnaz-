@@ -18,7 +18,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -54,22 +56,25 @@ fun TrackDetailScreen(
 
     Column(
         modifier = Modifier
+            .padding(top =16.dp)
+            .background(Color.White)
             .fillMaxSize()
-            .background(Color(0xFFF5F5F5))
     ) {
 
         // Back
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 12.dp, top = 12.dp),
+                .height(56.dp)
+                .padding(start = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = onBackClick) {
+            IconButton(onClick = { }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
-                    tint = Color.Black
+                    contentDescription = "Назад",
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .size(24.dp)
                 )
             }
         }
@@ -77,67 +82,72 @@ fun TrackDetailScreen(
         // Контент
         Column(
             modifier = Modifier
+                .padding(top = 26.dp, start = 24.dp, end = 24.dp)
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .height(412.dp)
         ) {
 
             // Обложка
             Box(
                 modifier = Modifier
-                    .size(280.dp)
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(Color(0xFFE53935))
-                    .padding(8.dp)
+                    .background(Color.White)
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(color = colorResource(R.color.ll_grey)),
+                contentAlignment = Alignment.Center
+
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.music_note),
+                    painter = painterResource(id = R.drawable.add_photo),
                     contentDescription = null,
                     modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(16.dp))
+                        .size(100.dp)
+                        .clip(RoundedCornerShape(8.dp)),
                 )
             }
-
-            Spacer(modifier = Modifier.height(28.dp))
-
-            Text(
-                text = track?.trackName ?: "Yesterday (Remastered 2009)",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Medium,
-                color = Color.Black
-            )
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Text(
-                text = track?.artistName ?: "The Beatles",
-                fontSize = 16.sp,
-                color = Color(0xFF8A8A8A)
-            )
         }
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            modifier = Modifier.padding(start = 24.dp),
+            text = track?.trackName ?: "Название трека",
+            fontSize = 22.sp,
+            fontFamily = FontFamily(Font(R.font.medium)),
+            color = Color.Black
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(
+            modifier = Modifier.padding(start = 24.dp),
+            text = track?.artistName ?: "Артист",
+            fontSize = 14.sp,
+            fontFamily = FontFamily(Font(R.font.medium)),
+            color = Color.Black
+        )
+
+        Spacer(modifier = Modifier.height(54.dp))
 
         // КНОПКИ
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 48.dp),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
 
             // Playlist
             Box(
                 modifier = Modifier
-                    .size(64.dp)
+                    .padding(start = 24.dp)
+                    .size(51.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFE0E0E0))
+                    .background(Color(0xFFBDBDBD))
                     .clickable { showBottomSheet = true },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.PlaylistAdd,
+                    imageVector = Icons.Default.AddToPhotos,
                     contentDescription = null,
                     tint = Color.White,
                     modifier = Modifier.size(28.dp)
@@ -147,9 +157,10 @@ fun TrackDetailScreen(
             // Favorite
             Box(
                 modifier = Modifier
-                    .size(64.dp)
+                    .padding(end = 24.dp)
+                    .size(51.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFE0E0E0))
+                    .background(color = colorResource(R.color.add_gray))
                     .clickable {
                         track?.let {
                             scope.launch {
@@ -170,119 +181,118 @@ fun TrackDetailScreen(
             }
         }
 
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(33.dp))
 
-        // ⏱ ДЛИТЕЛЬНОСТЬ
+        // длительность
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 24.dp),
+                .padding(horizontal = 16.dp, vertical = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Длительность",
-                fontSize = 14.sp,
-                color = Color(0xFF9E9E9E)
+                text = stringResource(R.string.track_time),
+                fontSize = 13.sp,
+                fontFamily = FontFamily(Font(R.font.regular)),
+                color = colorResource(R.color.grey)
             )
 
             Text(
                 text = "5:35",
-                fontSize = 14.sp,
+                fontSize = 13.sp,
+                fontFamily = FontFamily(Font(R.font.regular)),
                 color = Color.Black
             )
         }
-    }
 
-    // BottomSheet
-    if (showBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
+
+        // BottomSheet
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet = false },
+                //sheetState = sheetState,
+                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
             ) {
-
-                // handle
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
+                Column(
+                    modifier = Modifier.padding(16.dp)
                 ) {
+
                     Box(
-                        modifier = Modifier
-                            .padding(vertical = 8.dp)
-                            .size(width = 34.dp, height = 4.dp)
-                            .clip(RoundedCornerShape(2.dp))
-                            .background(Color(0xFFD0D0D0))
-                    )
-                }
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .padding(vertical = 8.dp)
+                                .size(width = 34.dp, height = 4.dp)
+                                .clip(RoundedCornerShape(2.dp))
+                                .background(Color(0xFFD0D0D0))
+                        )
+                    }
 
-                Text(
-                    text = "Добавить в плейлист",
-                    fontSize = 19.sp,
-                    fontFamily = FontFamily(Font(R.font.medium)),
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-
-                if (playlists.isEmpty()) {
                     Text(
-                        text = "Нет доступных плейлистов",
-                        color = Color.Gray,
-                        fontFamily = FontFamily(Font(R.font.regular)),
-                        modifier = Modifier.padding(vertical = 24.dp)
+                        text = stringResource(R.string.add_playlist),
+                        fontSize = 19.sp,
+                        fontFamily = FontFamily(Font(R.font.medium)),
+                        modifier = Modifier.padding(bottom = 16.dp)
                     )
-                } else {
-                    LazyColumn {
-                        items(playlists) { playlist ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        track?.let {
-                                            scope.launch {
-                                                playlistsViewModel.insertTrackToPlaylist(
-                                                    it,
-                                                    playlist.id
-                                                )
-                                                showBottomSheet = false
+
+                    if (playlists.isEmpty()) {
+                        Text(
+                            text = "Нет доступных плейлистов",
+                            color = Color.Gray,
+                            fontFamily = FontFamily(Font(R.font.regular)),
+                            modifier = Modifier.padding(vertical = 24.dp)
+                        )
+                    } else {
+                        LazyColumn {
+                            items(playlists) { playlist ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            track?.let {
+                                                scope.launch {
+                                                    playlistsViewModel.insertTrackToPlaylist(
+                                                        it,
+                                                        playlist.id
+                                                    )
+                                                    showBottomSheet = false
+                                                }
                                             }
                                         }
+                                        .padding(vertical = 12.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.music_note),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(48.dp)
+                                    )
+
+                                    Spacer(modifier = Modifier.width(12.dp))
+
+                                    Column {
+                                        Text(
+                                            text = playlist.name,
+                                            fontSize = 16.sp,
+                                            fontFamily = FontFamily(Font(R.font.regular)),
+                                            color = Color.Black
+                                        )
+
+                                        Text(
+                                            text = "${playlist.tracks.size} треков",
+                                            fontSize = 13.sp,
+                                            fontFamily = FontFamily(Font(R.font.regular)),
+                                            color = Color.Gray
+                                        )
                                     }
-                                    .padding(vertical = 12.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.music_note),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(48.dp)
-                                )
-
-                                Spacer(modifier = Modifier.width(12.dp))
-
-                                Column {
-                                    Text(
-                                        text = playlist.name,
-                                        fontSize = 16.sp,
-                                        fontFamily = FontFamily(Font(R.font.regular)),
-                                        color = Color.Black
-                                    )
-
-                                    Text(
-                                        text = "${playlist.tracks.size} треков",
-                                        fontSize = 13.sp,
-                                        fontFamily = FontFamily(Font(R.font.regular)),
-                                        color = Color.Gray
-                                    )
                                 }
                             }
-
-                            HorizontalDivider()
                         }
                     }
-                }
 
-                Spacer(modifier = Modifier.height(32.dp))
+                }
             }
         }
     }

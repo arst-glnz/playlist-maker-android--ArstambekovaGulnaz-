@@ -20,6 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -88,7 +90,7 @@ fun SearchScreen(
             Text(
                 text = stringResource(R.string.search),
                 fontSize = 22.sp,
-                fontWeight = Medium,
+                fontFamily = FontFamily(Font(R.font.medium)),
                 modifier = Modifier.padding(start = 48.dp, top = 14.dp)
             )
         }
@@ -218,7 +220,9 @@ fun SearchScreen(
 @Composable
 private fun NothingFoundScreen() {
     Box(
-        modifier = Modifier.fillMaxWidth().padding(top = 112.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 112.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(
