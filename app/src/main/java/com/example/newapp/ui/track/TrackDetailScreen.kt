@@ -18,12 +18,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.newapp.R
@@ -68,7 +70,7 @@ fun TrackDetailScreen(
                 .padding(start = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { }) {
+            IconButton(onClick = onBackClick ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Назад",
@@ -92,8 +94,7 @@ fun TrackDetailScreen(
                 modifier = Modifier
                     .background(Color.White)
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(color = colorResource(R.color.ll_grey)),
+                    .clip(RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center
 
             ) {
@@ -210,31 +211,32 @@ fun TrackDetailScreen(
         if (showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet = false },
-                //sheetState = sheetState,
-                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+                containerColor = Color.White,
+                dragHandle = {
+                    Box(
+                        modifier = Modifier
+                            .padding(vertical = 8.dp)
+                            .size(width = 50.dp, height = 4.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(colorResource(R.color.ll_grey))
+                    )
+                }
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 30.dp)
                 ) {
-
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .padding(vertical = 8.dp)
-                                .size(width = 34.dp, height = 4.dp)
-                                .clip(RoundedCornerShape(2.dp))
-                                .background(Color(0xFFD0D0D0))
-                        )
-                    }
-
+                    // Заголовок
                     Text(
                         text = stringResource(R.string.add_playlist),
                         fontSize = 19.sp,
                         fontFamily = FontFamily(Font(R.font.medium)),
-                        modifier = Modifier.padding(bottom = 16.dp)
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp, bottom = 24.dp)
                     )
 
                     if (playlists.isEmpty()) {
@@ -242,14 +244,19 @@ fun TrackDetailScreen(
                             text = "Нет доступных плейлистов",
                             color = Color.Gray,
                             fontFamily = FontFamily(Font(R.font.regular)),
-                            modifier = Modifier.padding(vertical = 24.dp)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 40.dp),
+                            textAlign = TextAlign.Center
                         )
                     } else {
-                        LazyColumn {
+                        LazyColumn(
+                        ) {
                             items(playlists) { playlist ->
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
+                                        .height(61.dp)
                                         .clickable {
                                             track?.let {
                                                 scope.launch {
@@ -261,16 +268,19 @@ fun TrackDetailScreen(
                                                 }
                                             }
                                         }
-                                        .padding(vertical = 12.dp),
+                                        .padding(start = 13.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
+                                    // Обложка плейлиста
                                     Image(
-                                        painter = painterResource(id = R.drawable.music_note),
+                                        painter = painterResource(id = R.drawable.music_note), //надо будет изменить
                                         contentDescription = null,
-                                        modifier = Modifier.size(48.dp)
+                                        modifier = Modifier
+                                            .size(50.dp),
+                                        contentScale = ContentScale.Crop
                                     )
 
-                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Spacer(modifier = Modifier.width(8.dp))
 
                                     Column {
                                         Text(
@@ -282,16 +292,15 @@ fun TrackDetailScreen(
 
                                         Text(
                                             text = "${playlist.tracks.size} треков",
-                                            fontSize = 13.sp,
+                                            fontSize = 11.sp,
                                             fontFamily = FontFamily(Font(R.font.regular)),
-                                            color = Color.Gray
+                                            color = colorResource(R.color.grey)
                                         )
                                     }
                                 }
                             }
                         }
                     }
-
                 }
             }
         }

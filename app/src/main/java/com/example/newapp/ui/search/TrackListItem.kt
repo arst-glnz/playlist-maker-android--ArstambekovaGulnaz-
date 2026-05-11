@@ -33,6 +33,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,7 +55,7 @@ fun TrackListItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
-            .padding(horizontal = 16.dp)
+            //.padding(horizontal = 16.dp)
             .combinedClickable(
                 onClick = { onClick() },
                 onLongClick = { onLongClick?.invoke() }
@@ -73,7 +75,7 @@ fun TrackListItem(
                 text = track.trackName,
                 color = Color.Black,
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Normal,
+                fontFamily = FontFamily(Font(R.font.regular)),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 letterSpacing = (-0.1).sp
@@ -87,8 +89,8 @@ fun TrackListItem(
                 Text(
                     text = track.artistName,
                     color = colorResource(R.color.grey),
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Normal,
+                    fontSize = 11.sp,
+                    fontFamily = FontFamily(Font(R.font.regular)),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     letterSpacing = (-0.1).sp
@@ -97,8 +99,8 @@ fun TrackListItem(
                 Text(
                     text = " • ${track.trackTime}",
                     color = colorResource(R.color.grey),
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Normal,
+                    fontSize = 11.sp,
+                    fontFamily = FontFamily(Font(R.font.regular))
                 )
             }
 

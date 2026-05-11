@@ -1,6 +1,5 @@
 package com.example.newapp.ui.search
 
-import android.R
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -28,9 +27,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.newapp.R
 
 @Composable
 fun HistoryRequests(
@@ -65,8 +67,9 @@ fun HistoryRequests(
 
                     Text(
                         text = item,
-                        fontSize = 17.sp,
-                        color = Color.Black
+                        color = Color.Black,
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(Font(R.font.regular))
                     )
                 }
             }

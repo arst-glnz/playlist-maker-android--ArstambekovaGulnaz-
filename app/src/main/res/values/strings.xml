@@ -18,4 +18,6 @@
     <string name="nothing_found">Ничего не нашлось</string>
     <string name="add_playlist">Добавить в плейлист</string>
     <string name="track_time">Длительность</string>
+    <string name="description">Описание</string>
+    <string name="playlists_name">Название*</string>
 </resources>

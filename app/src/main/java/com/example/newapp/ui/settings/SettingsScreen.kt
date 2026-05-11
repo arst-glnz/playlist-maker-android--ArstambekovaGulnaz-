@@ -40,6 +40,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.unit.dp
@@ -90,7 +92,7 @@ fun SettingScreen(
             Text(
                 text = stringResource(R.string.settings),
                 fontSize = 22.sp,
-                fontWeight = Medium,
+                fontFamily = FontFamily(Font(R.font.medium)),
                 modifier = Modifier.padding(start = 48.dp, top = 14.dp)
             )
         }
@@ -108,7 +110,7 @@ fun SettingScreen(
                 text = stringResource(R.string.light_or_dark),
                 color = Color.Black,
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Normal,
+                fontFamily = FontFamily(Font(R.font.regular)),
             )
 
             Switch(
@@ -191,7 +193,7 @@ fun SettingsButton(
                 text = txt,
                 color = Color.Black,
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Normal,
+                fontFamily = FontFamily(Font(R.font.regular))
             )
 
             Icon(

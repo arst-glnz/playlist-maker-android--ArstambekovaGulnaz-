@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -65,11 +67,11 @@ fun PlaylistListItem(playlist: Playlist, onClick: () -> Unit) {
             colorFilter = ColorFilter.tint(Color.Gray)
         )
 
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(8.dp))
 
         Column(
             modifier = Modifier.weight(1f),
-//            horizontalAlignment = Alignment.Start
+            horizontalAlignment = Alignment.Start
         ) {
             Text(
                 playlist.name,
@@ -129,7 +131,7 @@ fun PlaylistsScreen(
                     text = stringResource(R.string.playlists),
                     fontSize = 22.sp,
                     fontFamily = FontFamily(Font(R.font.medium)),
-                    modifier = Modifier.padding(start = 48.dp, top = 14.dp)
+                    modifier = Modifier.padding(start = 50.dp, top = 14.dp)
                 )
             }
 
@@ -137,7 +139,7 @@ fun PlaylistsScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize(),
-                contentPadding = PaddingValues(top = 8.dp, bottom = 80.dp)
+                contentPadding = PaddingValues(bottom = 80.dp)
             ) {
                 items(playlists.size) { index ->
                     PlaylistListItem(playlist = playlists[index]) {
@@ -149,17 +151,26 @@ fun PlaylistsScreen(
 
         // FloatingActionButton поверх всего
         FloatingActionButton(
+            onClick = addNewPlaylist,
             modifier = Modifier
                 .padding(32.dp)
                 .align(Alignment.BottomEnd),
-            onClick = addNewPlaylist,
-            containerColor = colorResource(R.color.add_gray),
-            contentColor = Color.White,
+
+            containerColor = Color.Transparent,
+            contentColor = Color.Unspecified,
+
+            elevation = FloatingActionButtonDefaults.elevation(
+                defaultElevation = 0.dp,
+                pressedElevation = 0.dp,
+                focusedElevation = 0.dp,
+                hoveredElevation = 0.dp
+            ),
+
             shape = CircleShape
         ) {
-            Icon(
-                modifier = Modifier.size(23.5.dp),
-                imageVector = Icons.Filled.Add,
+            Image(
+                modifier = Modifier.size(51.dp),
+                painter = painterResource(R.drawable.add_in_playlist),
                 contentDescription = "Создать плейлист"
             )
         }

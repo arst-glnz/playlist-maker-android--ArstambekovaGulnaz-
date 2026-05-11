@@ -18,6 +18,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -106,8 +107,9 @@ fun SearchScreen(
             placeholder = {
                 Text(
                     text = stringResource(R.string.search),
-                    color = Color(0xFF818C99),
-                    fontSize = 20.sp
+                    color = colorResource(R.color.yp_text_grey),
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.regular))
                 )
             },
             leadingIcon = {
@@ -155,7 +157,6 @@ fun SearchScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // === Отображение контента ===
         when (screenState) {
             is SearchState.Initial -> {
                 if (text.isEmpty() && historyList.isNotEmpty()) {
@@ -171,11 +172,11 @@ fun SearchScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(stringResource(R.string.search_placeholder))
+                        Text("")
                     }
                 }
             }
-            // ... остальные состояния
+
             is SearchState.Searching -> {  // Только один
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
@@ -239,7 +240,7 @@ private fun NothingFoundScreen() {
             Text(
                 text = stringResource(R.string.nothing_found),
                 fontSize = 19.sp,
-                fontWeight = Medium,
+                fontFamily = FontFamily(Font(R.font.medium)),
                 color = Color.Black
             )
         }
