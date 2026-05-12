@@ -2,9 +2,8 @@ package com.example.newapp.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.newapp.data.DatabaseMock
+import com.example.newapp.creator.Creator
 import com.example.newapp.data.network.Track
-import com.example.newapp.data.network.TracksRepositoryImpl
 import com.example.newapp.domain.api.PlaylistsRepository
 import com.example.newapp.domain.api.TracksRepository
 import com.example.newapp.domain.impl.PlaylistsRepositoryImpl
@@ -15,31 +14,32 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
-class PlaylistsViewModel() : ViewModel() {
+class PlaylistsViewModel : ViewModel() {
+
+    // Правильно берём через Creator
+    private val tracksRepository: TracksRepository = Creator.getTracksRepository()
+
     private val playlistsRepository: PlaylistsRepository =
         PlaylistsRepositoryImpl(scope = viewModelScope)
-    private val tracksRepository: TracksRepository = TracksRepositoryImpl(scope = viewModelScope)
-    // Используем мок базы вместо репозитория
-    private val databaseRepository: DatabaseMock = DatabaseMock(scope = viewModelScope)
 
     val playlists: Flow<List<Playlist>> = flow {
-        val collectedPlaylists = mutableListOf<Playlist>()
-        playlistsRepository.getAllPlaylists().collect { playlist ->
-            collectedPlaylists.addAll(playlist)
-            emit(collectedPlaylists.toList())
+        playlistsRepository.getAllPlaylists().collect { playlistList ->
+            emit(playlistList)
         }
     }
-    val favoriteList: Flow<List<Track>> = databaseRepository.getFavoriteTracks()
-    //--------------------------------------------------------------------------------------------------
+
+    val favoriteList: Flow<List<Track>> = tracksRepository.getFavoriteTracks()
+
+
     init {
-        // Добавляем тестовые плейлисты при первом запуске
+        // Добавляем тестовые плейлисты
         viewModelScope.launch {
             createNewPlayList("Best songs 2021", "Лучшие треки года")
             createNewPlayList("Summer Party", "Для вечеринок")
             createNewPlayList("Morning", "Утреннее настроение")
         }
     }
-    //--------------------------------------------------------------------------------------------------------
+
     fun createNewPlayList(namePlaylist: String, description: String) {
         viewModelScope.launch(Dispatchers.IO) {
             playlistsRepository.addNewPlaylist(namePlaylist, description)
@@ -64,6 +64,10 @@ class PlaylistsViewModel() : ViewModel() {
     }
 
     suspend fun isExist(track: Track): Track? {
-        return tracksRepository.getTrackByNameAndArtist(track = track).firstOrNull()
+        return tracksRepository.getTrackByNameAndArtist(track).firstOrNull()
+    }
+
+    suspend fun getAllTracks(): List<Track> {
+        return tracksRepository.getAllTracks()
     }
 }

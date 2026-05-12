@@ -40,7 +40,10 @@ android {
 }
 
 dependencies {
-
+    implementation(libs.coil.compose.v260)
+    implementation(libs.gson)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
     implementation(libs.androidx.lifecycle.viewmodel.ktx.v286)
     implementation(libs.androidx.activity.ktx.v193)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
@@ -71,5 +74,5 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-    implementation(libs.coil.compose) // Использовать последнюю версию
+    implementation(libs.coil.compose)
 }

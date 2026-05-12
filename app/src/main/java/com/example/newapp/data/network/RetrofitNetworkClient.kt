@@ -1,21 +1,40 @@
 package com.example.newapp.data.network
 
-import androidx.tracing.perfetto.handshake.protocol.Response
-import com.example.newapp.creator.Storage
-import com.example.newapp.domain.api.NetworkClient
 import com.example.newapp.data.dto.BaseResponse
 import com.example.newapp.data.dto.TracksSearchRequest
 import com.example.newapp.data.dto.TracksSearchResponse
+import com.example.newapp.domain.api.ITunesApiService
+import com.example.newapp.domain.api.NetworkClient
+import java.io.IOException
 
+class RetrofitNetworkClient(private val api: ITunesApiService) : NetworkClient {
 
-class RetrofitNetworkClient(private val storage: Storage) : NetworkClient {
+    override suspend fun doRequest(dto: Any): BaseResponse {
+        return try {
+            when (dto) {
+                is TracksSearchRequest -> {
+                    val response = api.searchTracks(query = dto.expression)
+                    // iTunes API всегда возвращает 200 OK, даже если ничего не найдено
+                    response.apply {
+                        resultCode = if (resultCount > 0) 200 else 404
+                    }
+                }
 
-    override fun doRequest(dto: Any): BaseResponse {           // ← имя параметра должно быть dto
-        val request = dto as TracksSearchRequest               // делаем безопасный каст
-        val searchList = storage.search(request.expression)
-
-        return TracksSearchResponse(searchList).apply {
-            resultCode = 200
+                else -> BaseResponse().apply {
+                    resultCode = 400
+                    errorMessage = "Invalid request type"
+                }
+            }
+        } catch (e: IOException) {
+            BaseResponse().apply {
+                resultCode = -1
+                errorMessage = "Network error: ${e.message}"
+            }
+        } catch (e: Exception) {
+            BaseResponse().apply {
+                resultCode = -2
+                errorMessage = "Unexpected error: ${e.message}"
+            }
         }
     }
 }

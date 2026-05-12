@@ -56,6 +56,11 @@ fun TrackDetailScreen(
         }
     }
 
+    LaunchedEffect(trackId) {
+        val allTracks = playlistsViewModel.getAllTracks()
+        track = allTracks.find { it.id == trackId }
+    }
+
     Column(
         modifier = Modifier
             .padding(top =16.dp)

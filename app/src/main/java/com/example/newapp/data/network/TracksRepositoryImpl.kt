@@ -11,22 +11,24 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 
 class TracksRepositoryImpl(
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
+    private val networkClient: NetworkClient
 ) : TracksRepository {
+    private val database = DatabaseMock(scope = scope)
     override suspend fun getAllTracks(): List<Track> {
-        delay(1000)// Имитируем запрос к серверу
-        return listTracks
+        return emptyList() // пока пусто, можно потом добавить мок-данные если нужно
     }
 
-    private val database = DatabaseMock(
-        scope = scope
-    )
     override suspend fun searchTracks(expression: String): List<Track> {
-        //return database.searchTracks(expression)
-        delay(500) // Имитируем задержку поиска
-        return listTracks.filter { track ->
-            track.trackName.contains(expression, ignoreCase = true) ||
-                    track.artistName.contains(expression, ignoreCase = true)
+        if (expression.isBlank()) return emptyList()
+
+        val request = TracksSearchRequest(expression)
+        val response = networkClient.doRequest(request)
+
+        return if (response.resultCode == 200 && response is TracksSearchResponse) {
+            TrackMapper.mapList(response.results)
+        } else {
+            emptyList()
         }
     }
 
@@ -53,47 +55,6 @@ class TracksRepositoryImpl(
     override fun getFavoriteTracks(): Flow<List<Track>> {
         return database.getFavoriteTracks()
     }
+
+
 }
-
-val listTracks = listOf(
-
-    Track(
-        id = 1,
-        trackName = "Звезда по имени Солнце",
-        artistName = "Кино",
-        trackTime = "2:25",
-        image = "",
-        favorite = false,
-        playlistId = 0
-    ),
-
-    Track(
-        id = 2,
-        trackName = "хорошо",
-        artistName = "вышел покурить",
-        trackTime = "2:38",
-        image = "",
-        favorite = true,
-        playlistId = 0
-    ),
-
-    Track(
-        id = 3,
-        trackName = "авангард",
-        artistName = "вышел покурить",
-        trackTime = "2:43",
-        image = "",
-        favorite = false,
-        playlistId = 0
-    ),
-
-    Track(
-        id = 4,
-        trackName = "Бошетунмай",
-        artistName = "Кино",
-        trackTime = "4:06",
-        image = "",
-        favorite = false,
-        playlistId = 0
-    )
-)
