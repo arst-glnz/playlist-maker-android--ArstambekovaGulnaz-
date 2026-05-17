@@ -70,11 +70,11 @@ fun TrackListItem(
         Box(
             modifier = Modifier
                 .size(48.dp)
-                .clip(RoundedCornerShape(4.dp))
+                .clip(RoundedCornerShape(2.dp))
         ) {
             if (track.image.isNotEmpty()) {
                 AsyncImage(
-                    model = track.image,                    // artworkUrl100
+                    model = track.image,
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,

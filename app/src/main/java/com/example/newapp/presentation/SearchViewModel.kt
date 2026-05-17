@@ -26,9 +26,8 @@ class SearchViewModel : ViewModel() {
 
     val searchScreenState = _searchScreenState.asStateFlow()
 
-    // ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
     val historyList = MutableStateFlow<List<String>>(emptyList())
-    // ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
+
 
     init {
         viewModelScope.launch {

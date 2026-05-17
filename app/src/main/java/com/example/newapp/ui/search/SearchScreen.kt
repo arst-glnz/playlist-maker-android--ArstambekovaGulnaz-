@@ -1,5 +1,6 @@
 package com.example.newapp.ui.search
 
+import android.text.Layout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.newapp.R
@@ -125,6 +127,7 @@ fun SearchScreen(
                     IconButton(
                         onClick = {
                             text = ""
+                            focusManager.clearFocus()
                             searchViewModel.clearSearch()
                         }
                     ) {
@@ -187,7 +190,6 @@ fun SearchScreen(
                 val tracks = (screenState as SearchState.Success).list
 
                 if (tracks.isEmpty()) {
-                    //Ничего не нашлось
                     NothingFoundScreen()
                 } else {
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -203,15 +205,10 @@ fun SearchScreen(
 
 
             is SearchState.Fail -> {
-                Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(stringResource(R.string.error), color = Color.Red)
-                        Text(
-                            (screenState as SearchState.Fail).error,
-                            color = Color.Red,
-                            fontSize = 12.sp
-                        )
-                    }
+                val error = (screenState as SearchState.Fail).error
+
+                if (error == "NO_INTERNET") {
+                    NoInternetScreen()
                 }
             }
         }
@@ -239,6 +236,51 @@ private fun NothingFoundScreen() {
 
             Text(
                 text = stringResource(R.string.nothing_found),
+                fontSize = 19.sp,
+                fontFamily = FontFamily(Font(R.font.medium)),
+                color = Color.Black
+            )
+        }
+    }
+}
+
+@Composable
+private fun NoInternetScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 112.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Image(
+                painter = painterResource(id = R.drawable.no_internet),
+                contentDescription = "Нет интернета",
+                modifier = Modifier.size(120.dp)
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = stringResource(R.string.network_problems),
+                fontSize = 19.sp,
+                fontFamily = FontFamily(Font(R.font.medium)),
+                color = Color.Black
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = stringResource(R.string.network_loading_problems),
+                fontSize = 19.sp,
+                fontFamily = FontFamily(Font(R.font.medium)),
+                color = Color.Black
+            )
+            Text(
+                text = stringResource(R.string.network_loading_problems_1),
                 fontSize = 19.sp,
                 fontFamily = FontFamily(Font(R.font.medium)),
                 color = Color.Black

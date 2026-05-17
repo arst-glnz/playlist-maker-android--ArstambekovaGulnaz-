@@ -20,4 +20,7 @@
     <string name="track_time">Длительность</string>
     <string name="description">Описание</string>
     <string name="playlists_name">Название*</string>
+    <string name="network_problems">Проблемы со связью</string>
+    <string name="network_loading_problems">Загрузка не удалась. Проверьте</string>
+    <string name="network_loading_problems_1">подключение к интернету</string>
 </resources>

@@ -16,7 +16,7 @@ class TracksRepositoryImpl(
 ) : TracksRepository {
     private val database = DatabaseMock(scope = scope)
     override suspend fun getAllTracks(): List<Track> {
-        return emptyList() // пока пусто, можно потом добавить мок-данные если нужно
+        return emptyList()
     }
 
     override suspend fun searchTracks(expression: String): List<Track> {
@@ -25,10 +25,10 @@ class TracksRepositoryImpl(
         val request = TracksSearchRequest(expression)
         val response = networkClient.doRequest(request)
 
-        return if (response.resultCode == 200 && response is TracksSearchResponse) {
-            TrackMapper.mapList(response.results)
+        if (response.resultCode == 200 && response is TracksSearchResponse) {
+            return TrackMapper.mapList(response.results)
         } else {
-            emptyList()
+            throw Exception("NO_INTERNET")
         }
     }
 
