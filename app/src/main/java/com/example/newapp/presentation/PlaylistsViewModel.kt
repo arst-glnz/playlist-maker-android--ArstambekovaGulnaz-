@@ -48,10 +48,6 @@ class PlaylistsViewModel : ViewModel() {
         }
     }
 
-    // =========================
-    // TRACKS
-    // =========================
-
     suspend fun insertTrackToPlaylist(
         track: Track,
         playlistId: Long

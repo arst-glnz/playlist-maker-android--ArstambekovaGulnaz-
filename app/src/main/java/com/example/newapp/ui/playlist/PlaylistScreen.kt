@@ -1,5 +1,9 @@
 package com.example.newapp.ui.playlist
 
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.runtime.*
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.foundation.gestures.detectTapGestures
 import android.R.attr.font
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -51,12 +55,19 @@ import com.example.newapp.presentation.PlaylistsViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
-fun PlaylistListItem(playlist: Playlist, onClick: () -> Unit) {
+fun PlaylistListItem(
+    playlist: Playlist,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(61.dp)
-            .clickable(onClick = onClick),
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -99,7 +110,8 @@ fun PlaylistsScreen(
     onBackClick: () -> Unit
 ) {
     val playlists by playlistsViewModel.playlists.collectAsState(emptyList())
-
+    var playlistToDelete by remember { mutableStateOf<Playlist?>(null) }
+    val scope = rememberCoroutineScope()
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -141,10 +153,12 @@ fun PlaylistsScreen(
                     .fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 80.dp)
             ) {
-                items(playlists.size) { index ->
-                    PlaylistListItem(playlist = playlists[index]) {
-                        navigateToPlaylist(playlists[index].id)
-                    }
+                items(playlists) { playlist ->
+                    PlaylistListItem(
+                        playlist = playlist,
+                        onClick = { navigateToPlaylist(playlist.id) },
+                        onLongClick = { playlistToDelete = playlist }
+                    )
                 }
             }
         }
