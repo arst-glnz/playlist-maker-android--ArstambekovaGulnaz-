@@ -57,7 +57,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Composable
 fun PlaylistListItem(
     playlist: Playlist,
-    onClick: () -> Unit,
+    onClick:() -> Unit,
     onLongClick: () -> Unit
 ) {
     Row(
@@ -98,6 +98,7 @@ fun PlaylistListItem(
                 color = Color.Gray
             )
         }
+
     }
 }
 

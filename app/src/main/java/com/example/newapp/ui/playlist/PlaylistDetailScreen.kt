@@ -114,6 +114,7 @@ fun PlaylistDetailScreen(
                         .size(24.dp)
                 )
             }
+
         }
 
         IconButton(onClick = {
