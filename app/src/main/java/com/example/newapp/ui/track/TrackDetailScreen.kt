@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,46 +23,41 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.newapp.R
 import com.example.newapp.data.network.Track
 import com.example.newapp.domain.models.Playlist
 import com.example.newapp.presentation.PlaylistsViewModel
-import com.example.newapp.presentation.SearchViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrackDetailScreen(
-    trackId: Long,
+    track: Track,
     playlistsViewModel: PlaylistsViewModel,
-    searchViewModel: SearchViewModel,
     onBackClick: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    val sheetState = rememberModalBottomSheetState()
-
+    var currentTrack by remember {
+        mutableStateOf(track)
+    }
     var showBottomSheet by remember { mutableStateOf(false) }
-    var track by remember { mutableStateOf<Track?>(null) }
     var playlists by remember { mutableStateOf<List<Playlist>>(emptyList()) }
 
     LaunchedEffect(Unit) {
-        playlistsViewModel.playlists.collect {
-            playlists = it
+        playlistsViewModel.playlists.collect { list ->
+            playlists = list
         }
     }
 
-    LaunchedEffect(trackId) {
-        val allTracks = playlistsViewModel.getAllTracks()
-        track = allTracks.find { it.id == trackId }
-    }
+
 
     Column(
         modifier = Modifier
-            .padding(top =16.dp)
+            .padding(top = 16.dp)
             .background(Color.White)
             .fillMaxSize()
     ) {
@@ -75,7 +69,7 @@ fun TrackDetailScreen(
                 .padding(start = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = onBackClick ) {
+            IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Назад",
@@ -99,17 +93,28 @@ fun TrackDetailScreen(
                 modifier = Modifier
                     .background(Color.White)
                     .fillMaxSize()
+                    .height(412.dp)
                     .clip(RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center
 
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.add_photo),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                )
+                if (currentTrack.image.isNotBlank()) {
+                    AsyncImage(
+                        model = currentTrack.image,
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                        error = painterResource(R.drawable.music_note)
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.add_photo),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(RoundedCornerShape(8.dp)),
+                    )
+                }
             }
         }
 
@@ -117,7 +122,7 @@ fun TrackDetailScreen(
 
         Text(
             modifier = Modifier.padding(start = 24.dp),
-            text = track?.trackName ?: "Название трека",
+            text = currentTrack.trackName,
             fontSize = 22.sp,
             fontFamily = FontFamily(Font(R.font.medium)),
             color = Color.Black
@@ -127,7 +132,7 @@ fun TrackDetailScreen(
 
         Text(
             modifier = Modifier.padding(start = 24.dp),
-            text = track?.artistName ?: "Артист",
+            text = currentTrack.artistName,
             fontSize = 14.sp,
             fontFamily = FontFamily(Font(R.font.medium)),
             color = Color.Black
@@ -168,17 +173,24 @@ fun TrackDetailScreen(
                     .clip(CircleShape)
                     .background(color = colorResource(R.color.add_gray))
                     .clickable {
-                        track?.let {
-                            scope.launch {
-                                playlistsViewModel.toggleFavorite(it, !it.favorite)
-                                track = it.copy(favorite = !it.favorite)
-                            }
+                        scope.launch {
+
+                            val newFavorite = !currentTrack.favorite
+
+                            playlistsViewModel.toggleFavorite(
+                                currentTrack,
+                                newFavorite
+                            )
+
+                            currentTrack = currentTrack.copy(
+                                favorite = newFavorite
+                            )
                         }
                     },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = if (track?.favorite == true)
+                    imageVector = if (currentTrack.favorite)
                         Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                     contentDescription = null,
                     tint = Color.White,
@@ -204,7 +216,7 @@ fun TrackDetailScreen(
             )
 
             Text(
-                text = "5:35",
+                text = currentTrack.trackTime,
                 fontSize = 13.sp,
                 fontFamily = FontFamily(Font(R.font.regular)),
                 color = Color.Black
@@ -263,14 +275,14 @@ fun TrackDetailScreen(
                                         .fillMaxWidth()
                                         .height(61.dp)
                                         .clickable {
-                                            track?.let {
-                                                scope.launch {
-                                                    playlistsViewModel.insertTrackToPlaylist(
-                                                        it,
-                                                        playlist.id
-                                                    )
-                                                    showBottomSheet = false
-                                                }
+                                            scope.launch {
+
+                                                playlistsViewModel.insertTrackToPlaylist(
+                                                    currentTrack,
+                                                    playlist.id
+                                                )
+
+                                                showBottomSheet = false
                                             }
                                         }
                                         .padding(start = 13.dp),
@@ -311,3 +323,4 @@ fun TrackDetailScreen(
         }
     }
 }
+

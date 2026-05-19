@@ -38,16 +38,9 @@ fun PlaylistDetailScreen(
     playlistId: Long,
     playlistsViewModel: PlaylistsViewModel,
     onBackClick: () -> Unit,
-    onTrackClick: (Long) -> Unit
+    onTrackClick: (Track) -> Unit
 ) {
 
-//    var playlist by remember { mutableStateOf<Playlist?>(null) }
-//
-//    LaunchedEffect(Unit) {
-//        playlistsViewModel.playlists.collect { playlists ->
-//            playlist = playlists.find { it.id == playlistId }
-//        }
-//    }
     val fakePlaylist = Playlist(
         id = 1,
         name = "Best songs 2021",
@@ -61,7 +54,6 @@ fun PlaylistDetailScreen(
                 trackTime = "2:55",
                 image = "",
                 favorite = false,
-                playlistId = 1
             ),
 
             Track(
@@ -71,7 +63,6 @@ fun PlaylistDetailScreen(
                 trackTime = "2:55",
                 image = "",
                 favorite = false,
-                playlistId = 1
             ),
 
             Track(
@@ -81,7 +72,6 @@ fun PlaylistDetailScreen(
                 trackTime = "5:41",
                 image = "",
                 favorite = false,
-                playlistId = 1
             ),
 
             Track(
@@ -91,7 +81,6 @@ fun PlaylistDetailScreen(
                 trackTime = "3:11",
                 image = "",
                 favorite = false,
-                playlistId = 1
             )
         )
     )
@@ -203,7 +192,7 @@ fun PlaylistDetailScreen(
                 TrackListItem(
                     track = track,
                     onClick = {
-                        onTrackClick(track.id)
+                        onTrackClick(track)
                     }
                 )
             }

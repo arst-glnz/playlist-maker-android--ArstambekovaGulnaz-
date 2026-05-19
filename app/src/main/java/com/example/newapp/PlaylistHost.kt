@@ -2,6 +2,7 @@ package com.example.newapp
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -44,14 +45,12 @@ fun PlaylistHost(
             SearchScreen(
                 modifier = Modifier.fillMaxSize(),
                 searchViewModel = searchViewModel,
-                onClick = {
-                    //navController.popBackStack()
-                    trackId ->
-                    if (trackId != null) {
-                        navController.navigate("track_detail/$trackId")
-                    } else {
-                        navController.popBackStack()
-                    }
+                onBackClick = { navController.popBackStack() },
+                onClick = { track ->
+
+                    playlistsViewModel.selectTrack(track)
+
+                    navController.navigate("track_detail")
                 }
             )
         }
@@ -64,7 +63,11 @@ fun PlaylistHost(
 
         composable(Screen.Favorites.name) {
             FavoritesScreen(
-                onBackClick = { navController.popBackStack()}
+                playlistsViewModel = playlistsViewModel,
+                onBackClick = { navController.popBackStack() },
+                onTrackClick = { trackId ->
+                    navController.navigate("track_detail")
+                }
             )
         }
 
@@ -99,23 +102,26 @@ fun PlaylistHost(
                 playlistId = playlistId,
                 playlistsViewModel = playlistsViewModel,
                 onBackClick = { navController.popBackStack() },
-                onTrackClick = { trackId ->
-                    navController.navigate("track_detail/$trackId")
+                onTrackClick = { navController.navigate("track_detail")
                 }
             )
         }
 
-        composable(
-            "track_detail/{trackId}",
-            arguments = listOf(navArgument("trackId") { type = NavType.LongType })
-        ) { backStackEntry ->
-            val trackId = backStackEntry.arguments?.getLong("trackId") ?: 0L
-            TrackDetailScreen(
-                trackId = trackId,
-                playlistsViewModel = playlistsViewModel,
-                searchViewModel = searchViewModel,
-                onBackClick = { navController.popBackStack() }
-            )
+        composable("track_detail") {
+
+            val track =
+                playlistsViewModel.selectedTrack.collectAsState().value
+
+            track?.let {
+
+                TrackDetailScreen(
+                    track = it,
+                    playlistsViewModel = playlistsViewModel,
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newapp.creator.Creator
 import com.example.newapp.domain.api.TrackSearchInteractor
+import com.example.newapp.domain.api.TracksRepository
 import com.example.newapp.ui.search.SearchHistoryRepositoryImpl
 import com.example.newapp.ui.search.SearchState
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +18,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
 class SearchViewModel : ViewModel() {
-
+    private val tracksRepository: TracksRepository = Creator.getTracksRepository()
     private val interactor: TrackSearchInteractor = Creator.provideTrackSearchInteractor()
     private val searchHistoryRepository = SearchHistoryRepositoryImpl(scope = viewModelScope)
 
@@ -62,6 +63,10 @@ class SearchViewModel : ViewModel() {
                 )
 
                 val list = interactor.searchTracks(expression = request)
+
+                list.forEach { track ->
+                    tracksRepository.saveTrack(track)
+                }
 
                 _searchScreenState.update { SearchState.Success(list = list) }
 

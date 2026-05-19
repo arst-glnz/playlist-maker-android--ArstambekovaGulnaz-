@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.newapp.R
+import com.example.newapp.data.network.Track
 import com.example.newapp.presentation.SearchViewModel
 import com.example.newapp.ui.search.HistoryRequests  // ← твой компонент из курса
 import java.nio.file.WatchEvent
@@ -38,7 +39,8 @@ import java.nio.file.WatchEvent
 fun SearchScreen(
     modifier: Modifier = Modifier,
     searchViewModel: SearchViewModel,
-    onClick: (Int?) -> Unit
+    onBackClick: () -> Unit,
+    onClick: (Track) -> Unit
 ) {
     val screenState by searchViewModel.searchScreenState.collectAsState()
     var historyList by remember { mutableStateOf<List<String>>(emptyList()) }
@@ -77,7 +79,7 @@ fun SearchScreen(
                 .fillMaxWidth()
         ) {
             IconButton(
-                { onClick(null) },
+                { onBackClick() },
                 modifier = Modifier
                     .padding(top = 14.dp)
                     .size(24.dp)
@@ -196,7 +198,7 @@ fun SearchScreen(
                         items(tracks) { track ->
                             TrackListItem(
                                 track = track,
-                                onClick = { onClick(track.id.toInt()) }
+                                onClick = { onClick(track) }
                             )
                         }
                     }

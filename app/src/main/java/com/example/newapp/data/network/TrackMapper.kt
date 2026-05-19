@@ -11,7 +11,6 @@ object TrackMapper {
             trackTime = formatTrackTime(dto.trackTimeMillis),
             image = dto.artworkUrl100 ?: "",
             favorite = false,
-            playlistId = 0
         )
     }
 
