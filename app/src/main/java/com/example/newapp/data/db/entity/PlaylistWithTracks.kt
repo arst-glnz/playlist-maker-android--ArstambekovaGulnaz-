@@ -20,3 +20,4 @@ data class PlaylistWithTracks(
     )
     val tracks: List<TrackEntity>
 )
+

@@ -51,7 +51,7 @@ import com.example.newapp.data.network.Track
 @Composable
 fun TrackListItem(
     track: Track,
-    onLongClick: (() -> Unit)? = null, //при долгом нажатии на элемент;
+    onLongClick: () -> Unit = {}, //при долгом нажатии на элемент;
     onClick: () -> Unit = {} //при обычном нажатии на элемент.
 ) {
     Row(
@@ -60,10 +60,9 @@ fun TrackListItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
-            //.padding(horizontal = 16.dp)
             .combinedClickable(
                 onClick = { onClick() },
-                onLongClick = { onLongClick?.invoke() }
+                onLongClick = onLongClick
             )
     ) {
 // Обложка трека
@@ -141,35 +140,7 @@ fun TrackListItem(
     }
 }
 
-/*@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun TrackListItemPreview() {
-    val sampleTracks = listOf(
-        Track(
-            trackName = "Yesterday (Remastered 2009)",
-            artistName = "The Beatles",
-            trackTime = "2:55",
-        ),
-        Track(
-            trackName = "Here Comes The Sun (Remastered...)",
-            artistName = "The Beatles",
-            trackTime = "4:01",
-        ),
-        Track(
-            trackName = "No Reply",
-            artistName = "The Beatles",
-            trackTime = "5:12",
-        )
-    )
 
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        sampleTracks.forEach { track ->
-            TrackListItem(track = track)
-        }
-    }
-}*/
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable

@@ -85,7 +85,7 @@ fun TrackDetailScreen(
             modifier = Modifier
                 .padding(top = 26.dp, start = 24.dp, end = 24.dp)
                 .fillMaxWidth()
-                .height(412.dp)
+                .height(312.dp)
         ) {
 
             // Обложка
@@ -93,7 +93,7 @@ fun TrackDetailScreen(
                 modifier = Modifier
                     .background(Color.White)
                     .fillMaxSize()
-                    .height(412.dp)
+                    .height(300.dp)
                     .clip(RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center
 

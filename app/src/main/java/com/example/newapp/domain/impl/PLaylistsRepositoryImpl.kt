@@ -2,6 +2,7 @@ package com.example.newapp.domain.impl
 
 import com.example.newapp.data.db.AppDatabase
 import com.example.newapp.data.db.entity.PlaylistEntity
+import com.example.newapp.data.db.entity.PlaylistWithTracks
 import com.example.newapp.domain.api.PlaylistsRepository
 import com.example.newapp.domain.models.Playlist
 import kotlinx.coroutines.flow.Flow
@@ -19,13 +20,24 @@ class PlaylistsRepositoryImpl(
         }
     }
 
-    override fun getPlaylist(playlistId: Long): Flow<Playlist?> {
-        return playlistDao.getPlaylist(playlistId).map { it?.toDomain() }
+    override fun getPlaylist(
+        playlistId: Long
+    ): Flow<Playlist?> {
+
+        return playlistDao.getPlaylist(playlistId)
+            .map { it?.toDomain() }
     }
 
-    override suspend fun addNewPlaylist(name: String, description: String) {
+    override suspend fun addNewPlaylist(
+        name: String,
+        description: String
+    ) {
+
         playlistDao.insertPlaylist(
-            PlaylistEntity(name = name, description = description)
+            PlaylistEntity(
+                name = name,
+                description = description
+            )
         )
     }
 
@@ -33,10 +45,19 @@ class PlaylistsRepositoryImpl(
         playlistDao.deletePlaylistById(id)
     }
 
-    private fun PlaylistEntity.toDomain() = Playlist(
-        id = id,
-        name = name,
-        description = description,
-        tracks = emptyList()
-    )
+    override fun getPlaylistWithTracks(
+        id: Long
+    ): Flow<PlaylistWithTracks?> {
+
+        return playlistDao.getPlaylistWithTracks(id)
+    }
+
+    private fun PlaylistEntity.toDomain(): Playlist {
+        return Playlist(
+            id = id,
+            name = name,
+            description = description,
+            tracks = emptyList()
+        )
+    }
 }

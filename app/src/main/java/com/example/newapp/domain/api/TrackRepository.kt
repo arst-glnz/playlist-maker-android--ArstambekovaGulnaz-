@@ -22,4 +22,6 @@ interface TracksRepository {
     suspend fun updateTrackFavoriteStatus(track: Track, isFavorite: Boolean)
 
     suspend fun saveTrack(track: Track)
+    suspend fun addTrackToPlaylist(track: Track, playlistId: Long)
+
 }

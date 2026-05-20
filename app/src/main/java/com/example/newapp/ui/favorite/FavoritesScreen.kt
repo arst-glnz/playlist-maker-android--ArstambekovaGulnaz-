@@ -26,6 +26,40 @@ fun FavoritesScreen(
     onTrackClick: (Track) -> Unit
 ) {
     val favoriteTracks by playlistsViewModel.favoriteList.collectAsState(initial = emptyList())
+    var trackToDelete by remember { mutableStateOf<Track?>(null) }
+    trackToDelete?.let { track ->
+
+        AlertDialog(
+            onDismissRequest = {
+                trackToDelete = null
+            },
+            title = {
+                Text("Удалить из избранного?")
+            },
+            text = {
+                Text(track.trackName)
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        playlistsViewModel.removeFromFavorites(track)
+                        trackToDelete = null
+                    }
+                ) {
+                    Text("Удалить")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        trackToDelete = null
+                    }
+                ) {
+                    Text("Отмена")
+                }
+            }
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -61,7 +95,10 @@ fun FavoritesScreen(
                 items(favoriteTracks) { track ->
                     TrackListItem(
                         track = track,
-                        onClick = { onTrackClick(track) }
+                        onClick = { onTrackClick(track) },
+                        onLongClick = {
+                            trackToDelete = track
+                        }
                     )
                 }
             }

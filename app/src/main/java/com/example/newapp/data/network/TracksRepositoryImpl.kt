@@ -3,13 +3,13 @@ package com.example.newapp.data.network
 import com.example.newapp.data.db.AppDatabase
 import com.example.newapp.data.db.entity.PlaylistTrackCrossRef
 import com.example.newapp.data.db.entity.TrackEntity
+import com.example.newapp.data.db.entity.toDomain
+import com.example.newapp.data.db.entity.toEntity
 import com.example.newapp.data.dto.TracksSearchRequest
 import com.example.newapp.data.dto.TracksSearchResponse
 import com.example.newapp.domain.api.NetworkClient
 import com.example.newapp.domain.api.TracksRepository
-import com.example.newapp.data.network.Track
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -19,7 +19,10 @@ class TracksRepositoryImpl(
     private val database: AppDatabase,
     private val scope: CoroutineScope,
 ) : TracksRepository {
+
     private val trackDao = database.trackDao()
+    private val playlistTrackDao = database.playlistTrackDao()
+
     override suspend fun getAllTracks(): List<Track> {
         return trackDao.getAllTracks().map { it.toDomain() }
     }
@@ -38,17 +41,26 @@ class TracksRepositoryImpl(
     }
 
     override fun getTrackByNameAndArtist(track: Track): Flow<Track?> {
-        return trackDao.getTrackByNameAndArtist(track.trackName, track.artistName)
-            .map { entity ->
-                entity?.toDomain()
-            }
+        return trackDao
+            .getTrackByNameAndArtist(track.trackName, track.artistName)
+            .map { it?.toDomain() }
     }
 
-    override suspend fun insertTrackToPlaylist(
-        track: Track,
-        playlistId: Long
-    ) {
+    override fun getFavoriteTracks(): Flow<List<Track>> {
+        return trackDao.getFavoriteTracks().map { list ->
+            list.map { it.toDomain() }
+        }
+    }
 
+    override suspend fun updateTrackFavoriteStatus(track: Track, isFavorite: Boolean) {
+        trackDao.updateFavorite(track.id, isFavorite)
+    }
+
+    override suspend fun saveTrack(track: Track) {
+        trackDao.insertTrack(track.toEntity())
+    }
+
+    override suspend fun insertTrackToPlaylist(track: Track, playlistId: Long) {
         trackDao.insertTrack(track.toEntity())
 
         playlistTrackDao.insertCrossRef(
@@ -59,18 +71,11 @@ class TracksRepositoryImpl(
         )
     }
 
-    override suspend fun deleteTrackFromPlaylist(
-        track: Track,
-        playlistId: Long
-    ) {
+    override suspend fun deleteTrackFromPlaylist(track: Track, playlistId: Long) {
         playlistTrackDao.deleteCrossRef(
             playlistId = playlistId,
             trackId = track.id
         )
-    }
-
-    override suspend fun updateTrackFavoriteStatus(track: Track, isFavorite: Boolean) {
-        trackDao.updateFavorite(track.id, isFavorite)
     }
 
     override fun deleteTracksByPlaylistId(playlistId: Long) {
@@ -79,34 +84,7 @@ class TracksRepositoryImpl(
         }
     }
 
-    override fun getFavoriteTracks(): Flow<List<Track>> {
-        return trackDao.getFavoriteTracks().map { list ->
-            list.map { it.toDomain() }
-        }
+    override suspend fun addTrackToPlaylist(track: Track, playlistId: Long) {
+        insertTrackToPlaylist(track, playlistId)
     }
-
-    // Extension functions
-    private fun TrackEntity.toDomain() = Track(
-        id = id,
-        trackName = trackName,
-        artistName = artistName,
-        trackTime = trackTime,
-        image = image,
-        previewUrl = previewUrl,
-        favorite = favorite
-    )
-    private fun Track.toEntity() = TrackEntity(
-        id = id,
-        trackName = trackName,
-        artistName = artistName,
-        trackTime = trackTime,
-        image = image,
-        previewUrl = previewUrl,
-        favorite = favorite
-    )
-    override suspend fun saveTrack(track: Track) {
-        trackDao.insertTrack(track.toEntity())
-    }
-    private val playlistTrackDao = database.playlistTrackDao()
-
 }

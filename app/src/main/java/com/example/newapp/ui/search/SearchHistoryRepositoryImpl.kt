@@ -1,6 +1,5 @@
 package com.example.newapp.ui.search
 
-import com.example.newapp.data.DatabaseMock
 import com.example.newapp.data.dto.Word
 import com.example.newapp.data.preferences.SearchHistoryPreferences
 import kotlinx.coroutines.CoroutineScope

@@ -33,4 +33,8 @@ interface PlaylistDao {
     WHERE playlistId = :playlistId
 """)
     suspend fun deletePlaylistTracks(playlistId: Long)
+    @Transaction
+    suspend fun addTrackToPlaylist(playlistId: Long, trackId: Long) {
+        // будет вызываться через PlaylistTrackDao (правильно в ViewModel)
+    }
 }

@@ -46,6 +46,7 @@ fun SearchScreen(
     var historyList by remember { mutableStateOf<List<String>>(emptyList()) }
     var text by remember { mutableStateOf("") }
     var isFocused by remember { mutableStateOf(false) }
+    var wordToDelete by remember { mutableStateOf<String?>(null) }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
@@ -169,7 +170,10 @@ fun SearchScreen(
                     HistoryRequests(
                         historyList = historyList,
                         onClick = { word -> text = word },
-                        onLongClick = { word -> searchViewModel.removeFromHistory(word) })
+                        onLongClick = { word ->
+                            wordToDelete = word
+                        }
+                    )
                 } else if (text.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -212,6 +216,33 @@ fun SearchScreen(
                 }
             }
         }
+    }
+
+    wordToDelete?.let { word ->
+
+        AlertDialog(
+            onDismissRequest = { wordToDelete = null },
+            title = { Text(text = "Удалить запрос?") },
+            text = { Text(text = "Удалить \"$word\" из истории поиска?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        searchViewModel.removeFromHistory(word)
+                        wordToDelete = null
+                    }
+                ) {
+                    Text("Удалить")
+                }
+            },
+
+            dismissButton = {
+                TextButton(
+                    onClick = { wordToDelete = null }
+                ) {
+                    Text("Отмена")
+                }
+            }
+        )
     }
 }
 

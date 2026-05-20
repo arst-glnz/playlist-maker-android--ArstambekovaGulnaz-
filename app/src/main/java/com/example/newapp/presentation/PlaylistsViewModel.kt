@@ -18,7 +18,7 @@ class PlaylistsViewModel : ViewModel() {
     private val tracksRepository: TracksRepository =
         Creator.getTracksRepository()
 
-    private val playlistsRepository: PlaylistsRepository =
+    val playlistsRepository: PlaylistsRepository =
         Creator.getPlaylistsRepository()
 
     val playlists: Flow<List<Playlist>> =
@@ -47,11 +47,16 @@ class PlaylistsViewModel : ViewModel() {
             )
         }
     }
-
-    // =========================
-    // TRACKS
-    // =========================
-
+    fun addTrackToPlaylist(track: Track, playlistId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            tracksRepository.addTrackToPlaylist(track, playlistId)
+        }
+    }
+    fun deleteTrackFromPlaylist(track: Track, playlistId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            tracksRepository.deleteTrackFromPlaylist(track, playlistId)
+        }
+    }
     suspend fun insertTrackToPlaylist(
         track: Track,
         playlistId: Long
@@ -72,15 +77,6 @@ class PlaylistsViewModel : ViewModel() {
         )
     }
 
-    suspend fun deleteTrackFromPlaylist(
-        track: Track,
-        playlistId: Long
-    ) {
-        tracksRepository.deleteTrackFromPlaylist(
-            track,
-            playlistId
-        )
-    }
 
     suspend fun deletePlaylistById(id: Long) {
 
@@ -99,5 +95,14 @@ class PlaylistsViewModel : ViewModel() {
     suspend fun getAllTracks(): List<Track> {
 
         return tracksRepository.getAllTracks()
+    }
+
+    fun removeFromFavorites(track: Track) {
+        viewModelScope.launch(Dispatchers.IO) {
+            tracksRepository.updateTrackFavoriteStatus(
+                track,
+                false
+            )
+        }
     }
 }

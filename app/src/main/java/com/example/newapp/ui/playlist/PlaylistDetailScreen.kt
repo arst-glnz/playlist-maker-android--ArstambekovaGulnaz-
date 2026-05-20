@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.newapp.R
+import com.example.newapp.data.db.entity.TrackEntity
 import com.example.newapp.data.network.Track
 import com.example.newapp.domain.models.Playlist
 import com.example.newapp.presentation.PlaylistsViewModel
@@ -44,60 +45,20 @@ fun PlaylistDetailScreen(
     onTrackClick: (Track) -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    val fakePlaylist = Playlist(
-        id = 1,
-        name = "Best songs 2021",
-        description = "2022",
-        tracks = listOf(
 
-            Track(
-                id = 1,
-                trackName = "Yesterday (Remastered 2009)",
-                artistName = "The Beatles",
-                trackTime = "2:55",
-                image = "",
-                favorite = false,
-            ),
+    val playlistWithTracks by playlistsViewModel
+        .playlistsRepository
+        .getPlaylistWithTracks(playlistId)
+        .collectAsState(initial = null)
 
-            Track(
-                id = 2,
-                trackName = "Here Comes The Sun (Remastered 2009)",
-                artistName = "The Beatles",
-                trackTime = "2:55",
-                image = "",
-                favorite = false,
-            ),
-
-            Track(
-                id = 3,
-                trackName = "No Reply",
-                artistName = "The Beatles",
-                trackTime = "5:41",
-                image = "",
-                favorite = false,
-            ),
-
-            Track(
-                id = 4,
-                trackName = "Let It Be",
-                artistName = "The Beatles",
-                trackTime = "3:11",
-                image = "",
-                favorite = false,
-            )
-        )
-    )
-
-    var playlist by remember {
-        mutableStateOf(fakePlaylist)
-    }
+    val playlist = playlistWithTracks?.playlist
+    val tracks = playlistWithTracks?.tracks ?: emptyList()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 16.dp)
     ) {
-        // Заголовок с кнопкой назад
         Row(
             modifier = Modifier
                 .height(56.dp)
@@ -120,7 +81,7 @@ fun PlaylistDetailScreen(
         IconButton(onClick = {
             scope.launch {
                 playlistsViewModel.deletePlaylistById(playlistId)
-                onBackClick() // возврат на список
+                onBackClick()
             }
         }) {
             Icon(
@@ -134,13 +95,14 @@ fun PlaylistDetailScreen(
             modifier = Modifier
                 .padding(start = 24.dp, end = 24.dp)
                 .fillMaxWidth()
-                .height(412.dp)
+                .height(300.dp)
         ) {
 
             // Обложка
             Box(
                 modifier = Modifier
                     .fillMaxSize()
+                    .height(100.dp)
                     .clip(RoundedCornerShape(8.dp))
                     .background(Color.White),
                 contentAlignment = Alignment.Center
@@ -161,7 +123,7 @@ fun PlaylistDetailScreen(
         ) {
 
             Text(
-                text = playlist.name,
+                text = playlist?.name ?: "Плейлист",
                 fontSize = 24.sp,
                 fontFamily = FontFamily(Font(R.font.bold)),
                 color = Color.Black
@@ -170,23 +132,19 @@ fun PlaylistDetailScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "2022",
+                text = playlist?.description ?: "",
                 fontSize = 18.sp,
                 fontFamily = FontFamily(Font(R.font.regular)),
-                color = Color.Black
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "300 минут • ${playlist.tracks.size} треков",
-                fontSize = 18.sp,
-                fontFamily = FontFamily(Font(R.font.regular)),
-                color = Color.Black
+                color = Color.Gray
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
+            Text(
+                text = "${tracks.sumOf { it.trackTime.toMinutesSafe() }} мин • ${tracks.size} треков",
+                fontSize = 16.sp,
+                color = Color.Black
+            )
             IconButton(
                 onClick = { }
             ) {
@@ -205,7 +163,10 @@ fun PlaylistDetailScreen(
                 .padding(start = 13.dp, end = 19.dp)
         ) {
 
-            items(playlist.tracks ?: emptyList()) { track ->
+            items(tracks) { entity ->
+
+                val track = entity.toTrack()
+
                 TrackListItem(
                     track = track,
                     onClick = {
@@ -214,6 +175,40 @@ fun PlaylistDetailScreen(
                 )
             }
         }
+
     }
 }
 
+private fun TrackEntity.toTrack(): Track {
+
+    return Track(
+        id = id,
+        trackName = trackName,
+        artistName = artistName,
+        trackTime = trackTime,
+        image = image,
+        previewUrl = previewUrl,
+        favorite = favorite
+    )
+}
+
+private fun String.toMinutesSafe(): Int {
+
+    return try {
+
+        val parts = split(":")
+
+        val minutes = parts[0].toInt()
+
+        val seconds = parts[1].toInt()
+
+        if (seconds > 0) {
+            minutes + 1
+        } else {
+            minutes
+        }
+
+    } catch (e: Exception) {
+        0
+    }
+}
