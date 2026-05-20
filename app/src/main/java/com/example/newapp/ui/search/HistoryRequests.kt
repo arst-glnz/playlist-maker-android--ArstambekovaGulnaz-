@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -37,7 +38,8 @@ import com.example.newapp.R
 @Composable
 fun HistoryRequests(
     historyList: List<String>,
-    onClick: (String) -> Unit
+    onClick: (String) -> Unit,
+    onLongClick: (String) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -52,7 +54,10 @@ fun HistoryRequests(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { onClick(item) }
+                        .combinedClickable(
+                            onClick = { onClick(item) },
+                            onLongClick = { onLongClick(item) }
+                        )
                         .padding(horizontal = 16.dp, vertical = 13.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {

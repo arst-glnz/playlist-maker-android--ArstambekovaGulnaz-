@@ -168,10 +168,8 @@ fun SearchScreen(
                     Spacer(modifier = Modifier.height((-8).dp))           // небольшой отступ от поля поиска
                     HistoryRequests(
                         historyList = historyList,
-                        onClick = { word ->
-                            text = word
-                        }
-                    )
+                        onClick = { word -> text = word },
+                        onLongClick = { word -> searchViewModel.removeFromHistory(word) })
                 } else if (text.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize(),

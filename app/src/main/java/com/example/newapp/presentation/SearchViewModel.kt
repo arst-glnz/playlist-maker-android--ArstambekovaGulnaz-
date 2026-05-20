@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 class SearchViewModel : ViewModel() {
     private val tracksRepository: TracksRepository = Creator.getTracksRepository()
     private val interactor: TrackSearchInteractor = Creator.provideTrackSearchInteractor()
-    private val searchHistoryRepository = SearchHistoryRepositoryImpl(scope = viewModelScope)
+    private val searchHistoryRepository = SearchHistoryRepositoryImpl( Creator.getSearchHistoryPreferences() )
 
     private val _searchQuery = MutableStateFlow("")
     private val _searchScreenState = MutableStateFlow<SearchState>(SearchState.Initial)
@@ -78,5 +78,12 @@ class SearchViewModel : ViewModel() {
 
     fun clearSearch() {
         _searchScreenState.update { SearchState.Initial }
+    }
+
+    fun removeFromHistory(word: String) {
+        searchHistoryRepository.removeFromHistory(word)
+    }
+    fun clearHistory() {
+        searchHistoryRepository.clearHistory()
     }
 }

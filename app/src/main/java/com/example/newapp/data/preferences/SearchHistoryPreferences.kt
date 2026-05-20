@@ -56,4 +56,22 @@ class SearchHistoryPreferences(
             }
         }
     }
+    fun removeEntry(word: String) {
+        scope.launch {
+            dataStore.edit { prefs ->
+                val currentString = prefs[HISTORY_KEY] ?: ""
+
+                val updatedList = currentString
+                    .split(SEPARATOR)
+                    .filter { it.isNotBlank() && it != word
+                    }
+                prefs[HISTORY_KEY] =
+                    updatedList.joinToString(SEPARATOR) } } }
+
+    fun clearHistory() {
+        scope.launch {
+            dataStore.edit { prefs ->
+                prefs[HISTORY_KEY] = "" }
+        }
+    }
 }

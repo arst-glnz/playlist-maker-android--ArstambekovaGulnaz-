@@ -8,5 +8,7 @@ interface SearchHistoryRepository {
     suspend fun getHistoryRequests(): Flow<List<String>>
 
     fun addToHistory(word: Word)
+    fun removeFromHistory(word: String)
+    fun clearHistory()
 }
 

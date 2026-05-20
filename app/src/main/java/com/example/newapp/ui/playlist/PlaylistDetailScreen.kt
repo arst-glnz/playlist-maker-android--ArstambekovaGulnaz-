@@ -1,5 +1,7 @@
 package com.example.newapp.ui.playlist
 
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,7 +43,7 @@ fun PlaylistDetailScreen(
     onBackClick: () -> Unit,
     onTrackClick: (Track) -> Unit
 ) {
-
+    val scope = rememberCoroutineScope()
     val fakePlaylist = Playlist(
         id = 1,
         name = "Best songs 2021",
@@ -111,6 +114,20 @@ fun PlaylistDetailScreen(
                         .size(24.dp)
                 )
             }
+
+        }
+
+        IconButton(onClick = {
+            scope.launch {
+                playlistsViewModel.deletePlaylistById(playlistId)
+                onBackClick() // возврат на список
+            }
+        }) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Удалить плейлист",
+                tint = Color.Red
+            )
         }
 
         Column(
@@ -144,7 +161,7 @@ fun PlaylistDetailScreen(
         ) {
 
             Text(
-                text = playlist?.name ?: "Best songs 2021",
+                text = playlist.name,
                 fontSize = 24.sp,
                 fontFamily = FontFamily(Font(R.font.bold)),
                 color = Color.Black
@@ -162,7 +179,7 @@ fun PlaylistDetailScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "300 минут • ${playlist?.tracks?.size ?: 98} треков",
+                text = "300 минут • ${playlist.tracks.size} треков",
                 fontSize = 18.sp,
                 fontFamily = FontFamily(Font(R.font.regular)),
                 color = Color.Black
@@ -188,7 +205,7 @@ fun PlaylistDetailScreen(
                 .padding(start = 13.dp, end = 19.dp)
         ) {
 
-            items(playlist?.tracks ?: emptyList()) { track ->
+            items(playlist.tracks ?: emptyList()) { track ->
                 TrackListItem(
                     track = track,
                     onClick = {
