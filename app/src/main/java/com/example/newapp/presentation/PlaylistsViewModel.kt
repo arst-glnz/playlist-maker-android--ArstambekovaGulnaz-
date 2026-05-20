@@ -105,4 +105,9 @@ class PlaylistsViewModel : ViewModel() {
             )
         }
     }
+    fun deletePlaylist(playlistId: Long) {
+        viewModelScope.launch {
+            playlistsRepository.deletePlaylistById(playlistId)
+        }
+    }
 }

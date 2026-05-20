@@ -3,6 +3,7 @@ package com.example.newapp.ui.playlist
 import android.R.attr.font
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,15 +22,20 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,12 +57,20 @@ import com.example.newapp.presentation.PlaylistsViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
-fun PlaylistListItem(playlist: Playlist, onClick: () -> Unit) {
+fun PlaylistListItem(
+    playlist: Playlist,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(61.dp)
-            .clickable(onClick = onClick),
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            ),
+
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -99,6 +113,8 @@ fun PlaylistsScreen(
     onBackClick: () -> Unit
 ) {
     val playlists by playlistsViewModel.playlists.collectAsState(emptyList())
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var playlistToDelete by remember { mutableStateOf<Playlist?>(null) }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -108,7 +124,6 @@ fun PlaylistsScreen(
                 .fillMaxSize()
                 .padding(top = 16.dp, start = 16.dp, end = 16.dp)
         ) {
-            // Заголовок с кнопкой назад
             Box(
                 modifier = Modifier
                     .height(56.dp)
@@ -135,21 +150,25 @@ fun PlaylistsScreen(
                 )
             }
 
-            // Список плейлистов
+            // cписок плейлистов
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 80.dp)
             ) {
                 items(playlists.size) { index ->
-                    PlaylistListItem(playlist = playlists[index]) {
-                        navigateToPlaylist(playlists[index].id)
-                    }
+                    PlaylistListItem(
+                        playlist = playlists[index],
+                        onClick = { navigateToPlaylist(playlists[index].id) },
+                        onLongClick = {  //
+                            playlistToDelete = playlists[index]
+                            showDeleteDialog = true
+                        }
+                    )
                 }
             }
         }
 
-        // FloatingActionButton поверх всего
         FloatingActionButton(
             onClick = addNewPlaylist,
             modifier = Modifier
@@ -174,5 +193,57 @@ fun PlaylistsScreen(
                 contentDescription = "Создать плейлист"
             )
         }
+    }
+    if (showDeleteDialog && playlistToDelete != null) {
+        AlertDialog(
+            onDismissRequest = {
+                showDeleteDialog = false
+                playlistToDelete = null
+            },
+            title = {
+                Text(
+                    text = "Удалить плейлист?",
+                    fontFamily = FontFamily(Font(R.font.medium)),
+                    fontSize = 18.sp
+                )
+            },
+            text = {
+                Text(
+                    text = "Вы уверены, что хотите удалить плейлист «${playlistToDelete?.name}»?",
+                    fontFamily = FontFamily(Font(R.font.regular)),
+                    fontSize = 14.sp
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        playlistToDelete?.let { playlist ->
+                            playlistsViewModel.deletePlaylist(playlist.id)
+                        }
+                        showDeleteDialog = false
+                        playlistToDelete = null
+                    }
+                ) {
+                    Text(
+                        text = "Удалить",
+                        color = Color.Red,
+                        fontFamily = FontFamily(Font(R.font.medium))
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteDialog = false
+                        playlistToDelete = null
+                    }
+                ) {
+                    Text(
+                        text = "Отмена",
+                        fontFamily = FontFamily(Font(R.font.medium))
+                    )
+                }
+            }
+        )
     }
 }
