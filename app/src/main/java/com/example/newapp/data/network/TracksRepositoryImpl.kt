@@ -22,6 +22,7 @@ class TracksRepositoryImpl(
 
     private val trackDao = database.trackDao()
     private val playlistTrackDao = database.playlistTrackDao()
+    private val playlistDao = database.playlistDao()
 
     override suspend fun getAllTracks(): List<Track> {
         return trackDao.getAllTracks().map { it.toDomain() }

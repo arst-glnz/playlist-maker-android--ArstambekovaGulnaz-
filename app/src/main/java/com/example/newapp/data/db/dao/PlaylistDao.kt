@@ -37,4 +37,17 @@ interface PlaylistDao {
     suspend fun addTrackToPlaylist(playlistId: Long, trackId: Long) {
         // будет вызываться через PlaylistTrackDao (правильно в ViewModel)
     }
+    @Query("""
+    UPDATE playlists
+    SET tracksCount = tracksCount + 1
+    WHERE id = :playlistId
+""")
+    suspend fun incrementTracksCount(playlistId: Long)
+
+    @Query("""
+    UPDATE playlists
+    SET tracksCount = tracksCount - 1
+    WHERE id = :playlistId
+""")
+    suspend fun decrementTracksCount(playlistId: Long)
 }

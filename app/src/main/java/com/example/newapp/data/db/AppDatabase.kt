@@ -13,7 +13,7 @@ import com.example.newapp.data.db.entity.TrackEntity
 
 @Database(
     entities = [TrackEntity::class, PlaylistEntity::class, PlaylistTrackCrossRef::class],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -32,7 +32,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "playlist_maker.db"
                 )
-                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration(false)
                     .build()
                     .also { INSTANCE = it }
             }
