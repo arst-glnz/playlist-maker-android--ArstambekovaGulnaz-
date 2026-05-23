@@ -14,13 +14,14 @@ data class PlaylistEntity(
     val tracksCount: Int = 0
 )
 
-fun PlaylistEntity.toDomain(): Playlist {
+fun PlaylistEntity.toDomain(tracksCountOverride: Int? = null): Playlist {
     return Playlist(
         id = id,
         name = name,
         description = description,
         tracks = emptyList(),
-        tracksCount = tracksCount
+        tracksCount = tracksCountOverride ?: tracksCount,
+        coverUrl = coverUrl
     )
 }
 
@@ -29,7 +30,7 @@ fun Playlist.toEntity(): PlaylistEntity {
         id = id,
         name = name,
         description = description,
-        coverUrl = "",
+        coverUrl = coverUrl,
         tracksCount = tracksCount
     )
 }

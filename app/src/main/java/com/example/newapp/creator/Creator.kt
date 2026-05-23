@@ -29,6 +29,7 @@ object Creator {
         applicationContext = context.applicationContext
     }
 
+    fun getApplicationContext(): Context = applicationContext
     private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl("https://itunes.apple.com/")

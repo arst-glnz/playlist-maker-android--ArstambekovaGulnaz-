@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newapp.creator.Creator
 import com.example.newapp.data.network.Track
+import com.example.newapp.util.CoverStorage
 import com.example.newapp.domain.api.PlaylistsRepository
 import com.example.newapp.domain.api.TracksRepository
 import com.example.newapp.domain.models.Playlist
@@ -37,13 +38,18 @@ class PlaylistsViewModel : ViewModel() {
     }
     fun createNewPlayList(
         namePlaylist: String,
-        description: String
+        description: String,
+        coverUrl: String = ""
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-
+            val savedCoverUrl = CoverStorage.persistCover(
+                Creator.getApplicationContext(),
+                coverUrl
+            )
             playlistsRepository.addNewPlaylist(
                 namePlaylist,
-                description
+                description,
+                savedCoverUrl
             )
         }
     }

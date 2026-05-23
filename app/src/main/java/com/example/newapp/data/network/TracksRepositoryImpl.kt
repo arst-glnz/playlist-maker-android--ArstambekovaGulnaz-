@@ -64,19 +64,25 @@ class TracksRepositoryImpl(
     override suspend fun insertTrackToPlaylist(track: Track, playlistId: Long) {
         trackDao.insertTrack(track.toEntity())
 
-        playlistTrackDao.insertCrossRef(
+        val rowId = playlistTrackDao.insertCrossRef(
             PlaylistTrackCrossRef(
                 playlistId = playlistId,
                 trackId = track.id
             )
         )
+        if (rowId != -1L) {
+            playlistDao.incrementTracksCount(playlistId)
+        }
     }
 
     override suspend fun deleteTrackFromPlaylist(track: Track, playlistId: Long) {
-        playlistTrackDao.deleteCrossRef(
+        val deletedRows = playlistTrackDao.deleteCrossRef(
             playlistId = playlistId,
             trackId = track.id
         )
+        if (deletedRows > 0) {
+            playlistDao.decrementTracksCount(playlistId)
+        }
     }
 
     override fun deleteTracksByPlaylistId(playlistId: Long) {

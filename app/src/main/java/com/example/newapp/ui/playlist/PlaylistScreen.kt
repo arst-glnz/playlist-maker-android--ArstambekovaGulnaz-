@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -38,9 +39,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -51,6 +54,7 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.newapp.R
 import com.example.newapp.domain.models.Playlist
 import com.example.newapp.presentation.PlaylistsViewModel
@@ -74,12 +78,24 @@ fun PlaylistListItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.add_icon),
-            contentDescription = playlist.name,
-            modifier = Modifier.size(45.dp),
-            colorFilter = ColorFilter.tint(Color.Gray)
-        )
+        if (playlist.coverUrl.isNotBlank()) {
+            AsyncImage(
+                model = playlist.coverUrl,
+                contentDescription = playlist.name,
+                modifier = Modifier
+                    .size(45.dp)
+                    .clip(RoundedCornerShape(4.dp)),
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(id = R.drawable.add_icon)
+            )
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.add_icon),
+                contentDescription = playlist.name,
+                modifier = Modifier.size(45.dp),
+                colorFilter = ColorFilter.tint(Color.Gray)
+            )
+        }
 
         Spacer(modifier = Modifier.width(8.dp))
 

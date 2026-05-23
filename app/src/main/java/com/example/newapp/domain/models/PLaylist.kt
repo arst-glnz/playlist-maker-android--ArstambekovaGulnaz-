@@ -7,5 +7,6 @@ data class Playlist(
     val name: String,
     val description: String,
     var tracks: List<Track>,
-    val tracksCount: Int = 0
+    val tracksCount: Int = 0,
+    val coverUrl: String = ""
 )

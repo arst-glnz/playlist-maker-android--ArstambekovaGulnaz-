@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.newapp.R
 import com.example.newapp.data.db.entity.TrackEntity
 import com.example.newapp.data.network.Track
@@ -108,13 +109,26 @@ fun PlaylistDetailScreen(
                 contentAlignment = Alignment.Center
 
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.add_photo),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                )
+                val coverUrl = playlist?.coverUrl.orEmpty()
+                if (coverUrl.isNotBlank()) {
+                    AsyncImage(
+                        model = coverUrl,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(8.dp)),
+                        contentScale = ContentScale.Crop,
+                        error = painterResource(id = R.drawable.add_photo)
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.add_photo),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(RoundedCornerShape(8.dp)),
+                    )
+                }
             }
         }
 
@@ -162,11 +176,8 @@ fun PlaylistDetailScreen(
                 .fillMaxSize()
                 .padding(start = 13.dp, end = 19.dp)
         ) {
-
             items(tracks) { entity ->
-
                 val track = entity.toTrack()
-
                 TrackListItem(
                     track = track,
                     onClick = {
@@ -178,6 +189,7 @@ fun PlaylistDetailScreen(
 
     }
 }
+
 
 private fun TrackEntity.toTrack(): Track {
 
@@ -197,9 +209,7 @@ private fun String.toMinutesSafe(): Int {
     return try {
 
         val parts = split(":")
-
         val minutes = parts[0].toInt()
-
         val seconds = parts[1].toInt()
 
         if (seconds > 0) {

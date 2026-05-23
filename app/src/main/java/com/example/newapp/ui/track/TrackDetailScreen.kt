@@ -308,7 +308,7 @@ fun TrackDetailScreen(
                                         )
 
                                         Text(
-                                            text = "${playlist.tracks.size} треков",
+                                            text = "${playlist.tracksCount} треков",
                                             fontSize = 11.sp,
                                             fontFamily = FontFamily(Font(R.font.regular)),
                                             color = colorResource(R.color.grey)

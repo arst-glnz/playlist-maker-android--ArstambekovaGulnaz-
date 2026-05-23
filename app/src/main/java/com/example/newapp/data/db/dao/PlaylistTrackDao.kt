@@ -10,7 +10,7 @@ import com.example.newapp.data.db.entity.PlaylistTrackCrossRef
 interface PlaylistTrackDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertCrossRef(crossRef: PlaylistTrackCrossRef)
+    suspend fun insertCrossRef(crossRef: PlaylistTrackCrossRef): Long
 
     @Query("""
         DELETE FROM playlist_track_cross_ref
@@ -20,7 +20,7 @@ interface PlaylistTrackDao {
     suspend fun deleteCrossRef(
         playlistId: Long,
         trackId: Long
-    )
+    ): Int
 
     @Query("""
         DELETE FROM playlist_track_cross_ref

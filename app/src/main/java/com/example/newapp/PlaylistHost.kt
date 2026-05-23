@@ -85,8 +85,8 @@ fun PlaylistHost(
 
         composable("create_playlist") {
             CreatePlaylistScreen(
-                onCreateClick = { name, description ->
-                    playlistsViewModel.createNewPlayList(name, description)
+                onCreateClick = { name, description, coverUrl ->
+                    playlistsViewModel.createNewPlayList(name, description, coverUrl)
                     navController.popBackStack()
                 },
                 onBackClick = { navController.popBackStack() }
