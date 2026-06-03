@@ -2,6 +2,7 @@ package com.example.newapp.ui.search
 
 import android.text.Layout
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -69,9 +70,14 @@ fun SearchScreen(
         }
     }
 
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+    val searchFieldColor = MaterialTheme.colorScheme.surfaceVariant
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(backgroundColor)
             .padding(top = 16.dp, start = 16.dp, end = 16.dp)
     ) {
         Box(
@@ -88,7 +94,7 @@ fun SearchScreen(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Назад",
-                    tint = Color.Black,
+                    tint = onBackgroundColor,
                     modifier = Modifier
                         .size(24.dp)
                 )
@@ -97,6 +103,7 @@ fun SearchScreen(
                 text = stringResource(R.string.search),
                 fontSize = 22.sp,
                 fontFamily = FontFamily(Font(R.font.medium)),
+                color = onBackgroundColor,
                 modifier = Modifier.padding(start = 48.dp, top = 14.dp)
             )
         }
@@ -121,7 +128,7 @@ fun SearchScreen(
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = null,
-                    tint = Color(0xFF818C99),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(start = 3.dp),
                 )
             },
@@ -137,6 +144,7 @@ fun SearchScreen(
                         Icon(
                             imageVector = Icons.Default.Clear,
                             contentDescription = "Очистить",
+                            tint = onBackgroundColor,
                             modifier = Modifier.size(16.dp)
                         )
                     }
@@ -145,11 +153,11 @@ fun SearchScreen(
             singleLine = false,
             shape = RoundedCornerShape(16.dp),
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color(0xFFE6E8EB),
-                unfocusedContainerColor = Color(0xFFE6E8EB),
+                focusedContainerColor = searchFieldColor,
+                unfocusedContainerColor = searchFieldColor,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                cursorColor = Color.Black
+                cursorColor = onBackgroundColor
             ),
             modifier = Modifier
                 .fillMaxWidth()
@@ -248,6 +256,8 @@ fun SearchScreen(
 
 @Composable
 private fun NothingFoundScreen() {
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -269,7 +279,7 @@ private fun NothingFoundScreen() {
                 text = stringResource(R.string.nothing_found),
                 fontSize = 19.sp,
                 fontFamily = FontFamily(Font(R.font.medium)),
-                color = Color.Black
+                color = onBackgroundColor
             )
         }
     }
@@ -277,6 +287,8 @@ private fun NothingFoundScreen() {
 
 @Composable
 private fun NoInternetScreen() {
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -299,7 +311,7 @@ private fun NoInternetScreen() {
                 text = stringResource(R.string.network_problems),
                 fontSize = 19.sp,
                 fontFamily = FontFamily(Font(R.font.medium)),
-                color = Color.Black
+                color = onBackgroundColor
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -308,13 +320,13 @@ private fun NoInternetScreen() {
                 text = stringResource(R.string.network_loading_problems),
                 fontSize = 19.sp,
                 fontFamily = FontFamily(Font(R.font.medium)),
-                color = Color.Black
+                color = onBackgroundColor
             )
             Text(
                 text = stringResource(R.string.network_loading_problems_1),
                 fontSize = 19.sp,
                 fontFamily = FontFamily(Font(R.font.medium)),
-                color = Color.Black
+                color = onBackgroundColor
             )
         }
     }

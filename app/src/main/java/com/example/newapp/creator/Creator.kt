@@ -8,6 +8,7 @@ import com.example.newapp.data.db.AppDatabase
 import com.example.newapp.data.network.RetrofitNetworkClient
 import com.example.newapp.data.network.TracksRepositoryImpl
 import com.example.newapp.data.preferences.SearchHistoryPreferences
+import com.example.newapp.data.preferences.ThemePreferences
 import com.example.newapp.domain.api.*
 import com.example.newapp.domain.impl.PlaylistsRepositoryImpl
 import com.example.newapp.domain.impl.TrackSearchInteractorImpl
@@ -57,6 +58,10 @@ object Creator {
 
     fun getSearchHistoryPreferences(): SearchHistoryPreferences {
         return SearchHistoryPreferences(applicationContext.dataStore)
+    }
+
+    fun getThemePreferences(): ThemePreferences {
+        return ThemePreferences(applicationContext.dataStore)
     }
 
     fun provideTrackSearchInteractor(): TrackSearchInteractor {

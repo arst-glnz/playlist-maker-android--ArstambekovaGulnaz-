@@ -1,5 +1,6 @@
 package com.example.newapp.ui.favorite
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -61,9 +62,12 @@ fun FavoritesScreen(
         )
     }
 
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(top = 16.dp, start = 16.dp, end = 16.dp)
     ) {
         Row(
@@ -71,12 +75,13 @@ fun FavoritesScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBackClick) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Назад", tint = Color.Black)
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Назад", tint = onBackgroundColor)
             }
             Text(
                 text = "Избранное",
                 fontSize = 22.sp,
                 fontFamily = FontFamily(Font(R.font.medium)),
+                color = onBackgroundColor,
                 modifier = Modifier.padding(start = 16.dp)
             )
         }
@@ -88,7 +93,11 @@ fun FavoritesScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Нет избранных треков", color = Color.Gray, fontSize = 18.sp)
+                Text(
+                    text = "Нет избранных треков",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 18.sp
+                )
             }
         } else {
             LazyColumn {

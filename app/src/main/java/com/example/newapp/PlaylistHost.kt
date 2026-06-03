@@ -65,7 +65,8 @@ fun PlaylistHost(
             FavoritesScreen(
                 playlistsViewModel = playlistsViewModel,
                 onBackClick = { navController.popBackStack() },
-                onTrackClick = { trackId ->
+                onTrackClick = { track ->
+                    playlistsViewModel.selectTrack(track)
                     navController.navigate("track_detail")
                 }
             )
@@ -102,7 +103,9 @@ fun PlaylistHost(
                 playlistId = playlistId,
                 playlistsViewModel = playlistsViewModel,
                 onBackClick = { navController.popBackStack() },
-                onTrackClick = { navController.navigate("track_detail")
+                onTrackClick = { track ->
+                    playlistsViewModel.selectTrack(track)
+                    navController.navigate("track_detail")
                 }
             )
         }

@@ -23,7 +23,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.foundation.background
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -66,6 +68,9 @@ fun PlaylistListItem(
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+    val onSurfaceVariant = MaterialTheme.colorScheme.onSurfaceVariant
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -93,7 +98,7 @@ fun PlaylistListItem(
                 painter = painterResource(id = R.drawable.add_icon),
                 contentDescription = playlist.name,
                 modifier = Modifier.size(45.dp),
-                colorFilter = ColorFilter.tint(Color.Gray)
+                colorFilter = ColorFilter.tint(onSurfaceVariant)
             )
         }
 
@@ -107,6 +112,7 @@ fun PlaylistListItem(
                 playlist.name,
                 fontSize = 16.sp,
                 fontFamily = FontFamily(Font(R.font.regular)),
+                color = onBackgroundColor,
                 maxLines = 1
             )
 
@@ -114,7 +120,7 @@ fun PlaylistListItem(
                 text = "${playlist.tracksCount} треков",
                 fontSize = 11.sp,
                 fontFamily = FontFamily(Font(R.font.regular)),
-                color = Color.Gray
+                color = onSurfaceVariant
             )
         }
     }
@@ -132,8 +138,12 @@ fun PlaylistsScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
     var playlistToDelete by remember { mutableStateOf<Playlist?>(null) }
 
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier
@@ -154,7 +164,7 @@ fun PlaylistsScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Назад",
-                        tint = Color.Black,
+                        tint = onBackgroundColor,
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -162,6 +172,7 @@ fun PlaylistsScreen(
                     text = stringResource(R.string.playlists),
                     fontSize = 22.sp,
                     fontFamily = FontFamily(Font(R.font.medium)),
+                    color = onBackgroundColor,
                     modifier = Modifier.padding(start = 50.dp, top = 14.dp)
                 )
             }
@@ -220,14 +231,16 @@ fun PlaylistsScreen(
                 Text(
                     text = "Удалить плейлист?",
                     fontFamily = FontFamily(Font(R.font.medium)),
-                    fontSize = 18.sp
+                    fontSize = 18.sp,
+                    color = onBackgroundColor
                 )
             },
             text = {
                 Text(
                     text = "Вы уверены, что хотите удалить плейлист «${playlistToDelete?.name}»?",
                     fontFamily = FontFamily(Font(R.font.regular)),
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    color = onBackgroundColor
                 )
             },
             confirmButton = {
@@ -256,6 +269,7 @@ fun PlaylistsScreen(
                 ) {
                     Text(
                         text = "Отмена",
+                        color = onBackgroundColor,
                         fontFamily = FontFamily(Font(R.font.medium))
                     )
                 }

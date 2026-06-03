@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.newapp.R
 import com.example.newapp.data.network.Track
+import com.example.newapp.util.toHighQualityArtworkUrl
 import com.example.newapp.domain.models.Playlist
 import com.example.newapp.presentation.PlaylistsViewModel
 import kotlinx.coroutines.launch
@@ -41,9 +42,9 @@ fun TrackDetailScreen(
     onBackClick: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    var currentTrack by remember {
-        mutableStateOf(track)
-    }
+    val currentTrack by playlistsViewModel
+        .observeTrack(track)
+        .collectAsState(initial = track)
     var showBottomSheet by remember { mutableStateOf(false) }
     var playlists by remember { mutableStateOf<List<Playlist>>(emptyList()) }
 
@@ -55,10 +56,13 @@ fun TrackDetailScreen(
 
 
 
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+
     Column(
         modifier = Modifier
             .padding(top = 16.dp)
-            .background(Color.White)
+            .background(backgroundColor)
             .fillMaxSize()
     ) {
 
@@ -73,7 +77,7 @@ fun TrackDetailScreen(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Назад",
-                    tint = Color.Black,
+                    tint = onBackgroundColor,
                     modifier = Modifier
                         .size(24.dp)
                 )
@@ -85,22 +89,21 @@ fun TrackDetailScreen(
             modifier = Modifier
                 .padding(top = 26.dp, start = 24.dp, end = 24.dp)
                 .fillMaxWidth()
-                .height(312.dp)
+                .height(400.dp)
         ) {
 
             // Обложка
             Box(
                 modifier = Modifier
-                    .background(Color.White)
-                    .fillMaxSize()
-                    .height(300.dp)
+                    .fillMaxWidth()
+                    .height(400.dp)
                     .clip(RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center
 
             ) {
                 if (currentTrack.image.isNotBlank()) {
                     AsyncImage(
-                        model = currentTrack.image,
+                        model = currentTrack.image.toHighQualityArtworkUrl(),
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop,
@@ -125,7 +128,7 @@ fun TrackDetailScreen(
             text = currentTrack.trackName,
             fontSize = 22.sp,
             fontFamily = FontFamily(Font(R.font.medium)),
-            color = Color.Black
+            color = onBackgroundColor
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -135,7 +138,7 @@ fun TrackDetailScreen(
             text = currentTrack.artistName,
             fontSize = 14.sp,
             fontFamily = FontFamily(Font(R.font.medium)),
-            color = Color.Black
+            color = onBackgroundColor
         )
 
         Spacer(modifier = Modifier.height(54.dp))
@@ -181,19 +184,18 @@ fun TrackDetailScreen(
                                 currentTrack,
                                 newFavorite
                             )
-
-                            currentTrack = currentTrack.copy(
-                                favorite = newFavorite
-                            )
                         }
                     },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = if (currentTrack.favorite)
-                        Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    imageVector = if (currentTrack.favorite) {
+                        Icons.Default.Favorite
+                    } else {
+                        Icons.Default.FavoriteBorder
+                    },
                     contentDescription = null,
-                    tint = Color.White,
+                    tint = if (currentTrack.favorite) Color.Red else Color.White,
                     modifier = Modifier.size(28.dp)
                 )
             }
@@ -219,7 +221,7 @@ fun TrackDetailScreen(
                 text = currentTrack.trackTime,
                 fontSize = 13.sp,
                 fontFamily = FontFamily(Font(R.font.regular)),
-                color = Color.Black
+                color = onBackgroundColor
             )
         }
 
@@ -229,7 +231,7 @@ fun TrackDetailScreen(
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet = false },
                 shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-                containerColor = Color.White,
+                containerColor = backgroundColor,
                 dragHandle = {
                     Box(
                         modifier = Modifier
@@ -250,6 +252,7 @@ fun TrackDetailScreen(
                         text = stringResource(R.string.add_playlist),
                         fontSize = 19.sp,
                         fontFamily = FontFamily(Font(R.font.medium)),
+                        color = onBackgroundColor,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -259,7 +262,7 @@ fun TrackDetailScreen(
                     if (playlists.isEmpty()) {
                         Text(
                             text = "Нет доступных плейлистов",
-                            color = Color.Gray,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontFamily = FontFamily(Font(R.font.regular)),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -304,7 +307,7 @@ fun TrackDetailScreen(
                                             text = playlist.name,
                                             fontSize = 16.sp,
                                             fontFamily = FontFamily(Font(R.font.regular)),
-                                            color = Color.Black
+                                            color = onBackgroundColor
                                         )
 
                                         Text(

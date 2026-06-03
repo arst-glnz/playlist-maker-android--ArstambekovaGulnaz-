@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SegmentedButtonDefaults.Icon
@@ -98,7 +99,7 @@ fun TrackListItem(
         ) {
             Text(
                 text = track.trackName,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 16.sp,
                 fontFamily = FontFamily(Font(R.font.regular)),
                 maxLines = 1,
@@ -168,7 +169,7 @@ fun History(
                     Icon(
                         imageVector = Icons.Default.History,
                         contentDescription = null,
-                        tint = Color(0xFF818C99),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(20.dp)
                     )
 
@@ -177,7 +178,7 @@ fun History(
                     Text(
                         text = item,
                         fontSize = 16.sp,
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }

@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -60,13 +61,15 @@ fun MainScreen(
         )
     }
 
+    val surfaceColor = MaterialTheme.colorScheme.surface
+
     Box(
         modifier = Modifier
             .padding(top = 84.dp)
             .fillMaxWidth()
             .fillMaxHeight()
             .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-            .background(Color.White)
+            .background(surfaceColor)
     ) {
         Column(
             modifier = Modifier.padding(top = 8.dp)
@@ -108,12 +111,16 @@ fun MainButton(
     txt: Int,
     onClick: () -> Unit
 ) {
+    val surfaceColor = MaterialTheme.colorScheme.surface
+    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
+    val iconTint = MaterialTheme.colorScheme.onSurfaceVariant
+
     Button(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
             .height(66.dp),
-        colors = ButtonDefaults.buttonColors(Color.White),
+        colors = ButtonDefaults.buttonColors(surfaceColor),
         contentPadding = PaddingValues(horizontal = 16.dp),
         elevation = null,
     ) {
@@ -126,6 +133,7 @@ fun MainButton(
                 Image(
                     painterResource(img1),
                     contentDescription = null,
+                    colorFilter = ColorFilter.tint(onSurfaceColor),
                     modifier = Modifier
                         .padding(start = 15.dp)
                         .size(24.dp)
@@ -133,7 +141,7 @@ fun MainButton(
                 Text(
                     stringResource(txt),
                     modifier = Modifier.padding(start = 10.dp),
-                    color = Color.Black,
+                    color = onSurfaceColor,
                     fontSize = 22.sp,
                     fontFamily = FontFamily(Font(R.font.medium))
                 )
@@ -141,7 +149,7 @@ fun MainButton(
             Image(
                 img2,
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(Color.Gray),
+                colorFilter = ColorFilter.tint(iconTint),
                 modifier = Modifier
                     .padding(end = 12.dp)
                     .size(28.dp)

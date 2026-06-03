@@ -28,11 +28,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.example.newapp.R
+import com.example.newapp.creator.Creator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,11 +64,15 @@ fun SettingScreen(
     val context = LocalContext.current
     val url = stringResource(R.string.offer_url)
 
-    var checkedState by remember { mutableStateOf(false) }
+    val themePreferences = remember { Creator.getThemePreferences() }
+    val isDarkTheme by themePreferences.isDarkTheme().collectAsState(initial = false)
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(backgroundColor)
             .padding(top = 16.dp, start = 16.dp, end = 16.dp),
     ) {
         Box(
@@ -84,7 +89,7 @@ fun SettingScreen(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Назад",
-                    tint = Color.Black,
+                    tint = onBackgroundColor,
                     modifier = Modifier
                         .size(24.dp)
                 )
@@ -93,6 +98,7 @@ fun SettingScreen(
                 text = stringResource(R.string.settings),
                 fontSize = 22.sp,
                 fontFamily = FontFamily(Font(R.font.medium)),
+                color = onBackgroundColor,
                 modifier = Modifier.padding(start = 48.dp, top = 14.dp)
             )
         }
@@ -108,20 +114,20 @@ fun SettingScreen(
         ) {
             Text(
                 text = stringResource(R.string.light_or_dark),
-                color = Color.Black,
+                color = onBackgroundColor,
                 fontSize = 16.sp,
                 fontFamily = FontFamily(Font(R.font.regular)),
             )
 
             Switch(
-                checked = checkedState,
-                { checkedState = it },
+                checked = isDarkTheme,
+                onCheckedChange = { themePreferences.setDarkTheme(it) },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = colorResource(R.color.yandex_purple),
                     checkedTrackColor = colorResource(R.color.yandex_purple_black),
                     uncheckedThumbColor = colorResource(R.color.grey),
                     uncheckedTrackColor = colorResource(R.color.ll_grey),
-                    uncheckedBorderColor = Color.White,
+                    uncheckedBorderColor = backgroundColor,
                 )
             )
         }
@@ -172,12 +178,15 @@ fun SettingsButton(
     txt: String,
     onClick: () -> Unit
 ) {
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+
     Button(
         onClick =  onClick,
         modifier = Modifier
             .height(61.dp)
             .fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(Color.White),
+        colors = ButtonDefaults.buttonColors(backgroundColor),
         elevation = null,
         contentPadding = PaddingValues(horizontal = 0.dp)
     ) {
@@ -191,7 +200,7 @@ fun SettingsButton(
 
             Text(
                 text = txt,
-                color = Color.Black,
+                color = onBackgroundColor,
                 fontSize = 16.sp,
                 fontFamily = FontFamily(Font(R.font.regular))
             )

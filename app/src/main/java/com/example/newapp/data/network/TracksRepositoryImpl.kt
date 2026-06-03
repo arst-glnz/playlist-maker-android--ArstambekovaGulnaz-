@@ -11,6 +11,7 @@ import com.example.newapp.domain.api.NetworkClient
 import com.example.newapp.domain.api.TracksRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -34,10 +35,19 @@ class TracksRepositoryImpl(
         val request = TracksSearchRequest(expression)
         val response = networkClient.doRequest(request)
 
-        if (response.resultCode == 200 && response is TracksSearchResponse) {
-            return TrackMapper.mapList(response.results)
-        } else {
-            throw Exception("NO_INTERNET")
+        when {
+            response is TracksSearchResponse && response.resultCode == 200 -> {
+                return TrackMapper.mapList(response.results)
+            }
+            response is TracksSearchResponse && response.resultCode == 404 -> {
+                return emptyList()
+            }
+            response.resultCode == -1 -> {
+                throw Exception("NO_INTERNET")
+            }
+            else -> {
+                throw Exception("NO_INTERNET")
+            }
         }
     }
 
@@ -54,11 +64,26 @@ class TracksRepositoryImpl(
     }
 
     override suspend fun updateTrackFavoriteStatus(track: Track, isFavorite: Boolean) {
-        trackDao.updateFavorite(track.id, isFavorite)
+        val existing = trackDao
+            .getTrackByNameAndArtist(track.trackName, track.artistName)
+            .firstOrNull()
+
+        if (existing != null) {
+            trackDao.updateFavorite(existing.id, isFavorite)
+        } else {
+            trackDao.insertTrack(track.toEntity().copy(favorite = isFavorite))
+        }
     }
 
     override suspend fun saveTrack(track: Track) {
-        trackDao.insertTrack(track.toEntity())
+        val existing = trackDao
+            .getTrackByNameAndArtist(track.trackName, track.artistName)
+            .firstOrNull()
+
+        val entity = track.toEntity().copy(
+            favorite = existing?.favorite ?: false
+        )
+        trackDao.insertTrack(entity)
     }
 
     override suspend fun insertTrackToPlaylist(track: Track, playlistId: Long) {

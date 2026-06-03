@@ -67,9 +67,13 @@ fun CreatePlaylistScreen(
         }
     }
 
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(backgroundColor)
             .padding(top = 16.dp)
     ) {
         Row(
@@ -82,7 +86,7 @@ fun CreatePlaylistScreen(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Назад",
-                    tint = Color.Black,
+                    tint = onBackgroundColor,
                     modifier = Modifier.size(24.dp)
                 )
             }
@@ -93,6 +97,7 @@ fun CreatePlaylistScreen(
                 fontSize = 22.sp,
                 fontFamily = FontFamily(Font(R.font.medium)),
                 fontWeight = FontWeight.Medium,
+                color = onBackgroundColor,
             )
         }
 
@@ -106,7 +111,7 @@ fun CreatePlaylistScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .clickable { openGallery() },
                 contentAlignment = Alignment.Center
             ) {
@@ -149,8 +154,11 @@ fun CreatePlaylistScreen(
             singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = colorResource(R.color.yandex_purple),
-                unfocusedBorderColor = Color.Gray,
+                unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 focusedLabelColor = colorResource(R.color.yandex_purple),
+                unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                focusedTextColor = onBackgroundColor,
+                unfocusedTextColor = onBackgroundColor,
                 cursorColor = colorResource(R.color.yandex_purple)
             )
         )
@@ -175,8 +183,11 @@ fun CreatePlaylistScreen(
             minLines = 1,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color(0xFF3772E7),
-                unfocusedBorderColor = Color.Gray,
+                unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 focusedLabelColor = Color(0xFF3772E7),
+                unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                focusedTextColor = onBackgroundColor,
+                unfocusedTextColor = onBackgroundColor,
                 cursorColor = Color(0xFF3772E7)
             )
         )

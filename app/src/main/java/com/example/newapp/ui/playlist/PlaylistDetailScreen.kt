@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -55,9 +56,13 @@ fun PlaylistDetailScreen(
     val playlist = playlistWithTracks?.playlist
     val tracks = playlistWithTracks?.tracks ?: emptyList()
 
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(backgroundColor)
             .padding(top = 16.dp)
     ) {
         Row(
@@ -71,7 +76,7 @@ fun PlaylistDetailScreen(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Назад",
-                    tint = Color.Black,
+                    tint = onBackgroundColor,
                     modifier = Modifier
                         .size(24.dp)
                 )
@@ -105,7 +110,7 @@ fun PlaylistDetailScreen(
                     .fillMaxSize()
                     .height(100.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Color.White),
+                    .background(backgroundColor),
                 contentAlignment = Alignment.Center
 
             ) {
@@ -140,7 +145,7 @@ fun PlaylistDetailScreen(
                 text = playlist?.name ?: "Плейлист",
                 fontSize = 24.sp,
                 fontFamily = FontFamily(Font(R.font.bold)),
-                color = Color.Black
+                color = onBackgroundColor
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -149,7 +154,7 @@ fun PlaylistDetailScreen(
                 text = playlist?.description ?: "",
                 fontSize = 18.sp,
                 fontFamily = FontFamily(Font(R.font.regular)),
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -157,7 +162,7 @@ fun PlaylistDetailScreen(
             Text(
                 text = "${tracks.sumOf { it.trackTime.toMinutesSafe() }} мин • ${tracks.size} треков",
                 fontSize = 16.sp,
-                color = Color.Black
+                color = onBackgroundColor
             )
             IconButton(
                 onClick = { }
@@ -165,7 +170,7 @@ fun PlaylistDetailScreen(
                 Icon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = null,
-                    tint = Color(0xFF1C1B1F)
+                    tint = onBackgroundColor
                 )
             }
         }

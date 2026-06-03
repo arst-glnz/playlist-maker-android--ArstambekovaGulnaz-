@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class PlaylistsViewModel : ViewModel() {
@@ -35,7 +36,18 @@ class PlaylistsViewModel : ViewModel() {
 
     fun selectTrack(track: Track) {
         _selectedTrack.value = track
+        viewModelScope.launch(Dispatchers.IO) {
+            val saved = tracksRepository
+                .getTrackByNameAndArtist(track)
+                .firstOrNull()
+            if (saved != null) {
+                _selectedTrack.value = saved
+            }
+        }
     }
+
+    fun observeTrack(track: Track): Flow<Track> =
+        tracksRepository.getTrackByNameAndArtist(track).map { saved -> saved ?: track }
     fun createNewPlayList(
         namePlaylist: String,
         description: String,
@@ -77,10 +89,11 @@ class PlaylistsViewModel : ViewModel() {
         track: Track,
         isFavorite: Boolean
     ) {
-        tracksRepository.updateTrackFavoriteStatus(
-            track,
-            isFavorite
-        )
+        tracksRepository.updateTrackFavoriteStatus(track, isFavorite)
+        val updated = track.copy(favorite = isFavorite)
+        if (_selectedTrack.value?.id == track.id) {
+            _selectedTrack.value = updated
+        }
     }
 
 

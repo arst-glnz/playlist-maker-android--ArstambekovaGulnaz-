@@ -47,7 +47,7 @@ fun HistoryRequests(
             .heightIn(max = 250.dp)
         ,
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFE6E8EB))
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         LazyColumn {
             itemsIndexed(historyList) { index, item ->
@@ -64,7 +64,7 @@ fun HistoryRequests(
                     Icon(
                         imageVector = Icons.Default.History,
                         contentDescription = null,
-                        tint = Color(0xFF818C99),        // серый цвет как в твоём TextField
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(20.dp)
                     )
 
@@ -72,7 +72,7 @@ fun HistoryRequests(
 
                     Text(
                         text = item,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 16.sp,
                         fontFamily = FontFamily(Font(R.font.regular))
                     )
