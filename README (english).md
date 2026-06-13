@@ -29,9 +29,8 @@ The application provides track search functionality via the internet with real-t
 ### Favorites
 Users can add tracks to favorites for quick access. Data is stored locally on the device.
 
-<img width="633" height="1393" alt="Favorites screen" src="https://user-images.githubusercontent.com/.../favorites.png" />
-
-<img width="633" height="1401" alt="Favorites details" src="https://user-images.githubusercontent.com/.../favorites-details.png" />
+<img width="633" height="1393" alt="Favorites screen" src="https://github.com/user-attachments/assets/ae86c096-55e6-459f-b69e-a35e0bd4bf20" />
+<img width="633" height="1401" alt="Favorites details" src="https://github.com/user-attachments/assets/bcec7efb-f2b9-4a16-93c2-b9a40283f387" />
 
 ---
 
@@ -43,13 +42,10 @@ Users can create and manage playlists:
 - view playlist contents;
 - edit and manage playlists.
 
-<img width="635" height="1398" alt="Playlists screen" src="https://user-images.githubusercontent.com/.../playlists.png" />
-
-<img width="630" height="1395" alt="Playlist details" src="https://user-images.githubusercontent.com/.../playlist-details.png" />
-
-<img width="618" height="1393" alt="Playlist edit" src="https://user-images.githubusercontent.com/.../playlist-edit.png" />
-
-<img width="620" height="1398" alt="Playlist management" src="https://user-images.githubusercontent.com/.../playlist-management.png" />
+<img width="635" height="1398" alt="Playlists screen" src="https://github.com/user-attachments/assets/59f3902c-df41-4bf8-a8d8-a2345de73d89" />
+<img width="630" height="1395" alt="Playlist details" src="https://github.com/user-attachments/assets/5e0a3cf8-df68-41bd-9536-98b3aa5bb2f2" />
+<img width="618" height="1393" alt="Playlist edit" src="https://github.com/user-attachments/assets/4a64c40e-4c7d-440c-995a-0d406e2ba485" />
+<img width="620" height="1398" alt="Playlist management" src="https://github.com/user-attachments/assets/8e1fba14-5dab-448b-a88f-92d02a276443" />
 
 ---
 
@@ -60,7 +56,7 @@ Users can:
 - share an application download link;
 - manage additional preferences.
 
-<img width="631" height="1393" alt="Settings screen" src="https://user-images.githubusercontent.com/.../settings.png" />
+<img width="631" height="1393" alt="Settings screen" src="https://github.com/user-attachments/assets/640a2d69-6430-4d21-aad2-c7f81ba7ddb2" />
 
 ---
 
